@@ -6,7 +6,7 @@
 # 소개:
 이것은 Tesseract를 바꿀 수있는 고급 기능의 풍부한 서버 소프트웨어입니다.
 이 구동기는 PMMP 를 기반으로합니다.
-# Features:
+# 기능:
 - [X] Fully Functional **Elytra Wings** and **SlimeBlocks**
 - [X] **EnderPearls**
 - [X] **SplashPotions**
