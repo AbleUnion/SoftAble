@@ -35,24 +35,17 @@
 - [ ] Boat
 - [ ] redstone(기초 작업 완료)
 - [ ] 엔더월드
+- [ ] 엔더알 티피
 - [ ] Toggleable MobAI
 
 ***많은 기능은 leveryl.yml에서 확인 가능"....***
-
-# Builds & Gitter Chat:
-#### CircleCI Build Status: [![CircleCI](https://circleci.com/gh/LeverylTeam/Leveryl.svg?style=svg)](https://circleci.com/gh/LeverylTeam/Leveryl)
-#### TravisCI Build Status: [![TravisCI](https://travis-ci.org/LeverylTeam/Leveryl.svg?branch=master)](https://travis-ci.org/LeverylTeam/Leveryl)
-#### Gitter Chat: [![Gitter](https://badges.gitter.im/leveryl/leveryl.svg)](https://gitter.im/leveryl/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=pr-badge)
-
-# Windows & Linux Installation:
-Read [this](https://github.com/LeverylTeam/Leveryl/wiki/Installation) page on our [Wiki](https://github.com/LeverylTeam/Leveryl/wiki/)... ;)
 
 # Resources:
 To be able to run this on Windows, You'll need Visual Studio C++ Redistributable 2015,
 Which can be downloaded [Here](https://www.microsoft.com/en-us/download/details.aspx?id=48145).
 
 # Acknowledgements / Credits:
-- Leveryl is a "spoon" of **[Pocketmine-MP](http://github.com/pmmp/PocketMine-MP/)**
+- SoftAble is a "spoon" of **[Pocketmine-MP](http://github.com/pmmp/PocketMine-MP/)**
 - Most of the original code was written by the original PocketMine Team and the new PMMP Team.
 - Some Implementations are ported from Tesseract, GenisysPro and Genisys
 - Ported files' authors are stated inside the file
