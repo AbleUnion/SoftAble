@@ -2,14 +2,12 @@
   <img src="https://github.com/LeverylTeam/Leveryl/blob/master/assets/banner.png">
 </p>
 
-## Warning: 32-Bit support is Deprecated!!!
-<!-- #### Notice: Master is the only supported branch. Other branches are usually still W.I.P. and might be un-stable. -->
+## 32비트 지원 안함. 64비트만 지원
+<!-- #### 주의 사항 : Master 만 지원됩니다. 다른 지점은 대개 여전히 W.I.P.입니다. 불안정 할 수도 있습니다. -->
 
-# Introduction:
-This is an Advanced & Feature Rich Server Software to hopefully Replace Tesseract.  
-(They're dead. And this is **NOT** supposed to be taken out of context.)  
-This spoon is based off of PMMP (For Stability)  
-
+# 소개:
+이것은 Tesseract를 바꿀 수있는 고급 기능의 풍부한 서버 소프트웨어입니다.
+이 구동기는 PMMP 를 기반으로합니다.
 # Features:
 - [X] Fully Functional **Elytra Wings** and **SlimeBlocks**
 - [X] **EnderPearls**
@@ -24,7 +22,7 @@ This spoon is based off of PMMP (For Stability)
 - [X] **CustomEnchants**
 - [X] Full Implementation of **DevTools**
 - [X] Built-in **Plugin Manager**
-- [ ] 1.0.1 Blocks & Items
+- [X] 1.0.1 Blocks & Items
 - [X] **Toggleable PluginAPI Version Checking**
 - [X] **Nether**
 - [X] **Toggleable Built-In Devtools & FolderPluginLoader**
@@ -34,9 +32,14 @@ This spoon is based off of PMMP (For Stability)
 - [X] GameRule
 - [X] Spawn Eggs
 - [X] Working Mob Spawners
+- [ ] PHP7.2
+- [ ] Minecart
+- [ ] Boat
+- [ ] redstone(기초 작업 완료)
+- [ ] 엔더월드
 - [ ] Toggleable MobAI
 
-***Other List Entries are on "leveryl.yml"....***
+***많은 기능은 leveryl.yml에서 확인 가능"....***
 
 # Builds & Gitter Chat:
 #### CircleCI Build Status: [![CircleCI](https://circleci.com/gh/LeverylTeam/Leveryl.svg?style=svg)](https://circleci.com/gh/LeverylTeam/Leveryl)
