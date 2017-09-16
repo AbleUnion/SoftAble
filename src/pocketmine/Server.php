@@ -1611,7 +1611,6 @@ class Server
 				@file_put_contents($this->dataPath . "leveryl.yml", $content);
 			}
 			$this->leverylconfig = new Config($this->dataPath . "leveryl.yml", Config::YAML, []);
-			$this->alwaysday = $this->leverylconfig->get("AlwaysDay");
 
 			$this->alwaysday = $this->leverylconfig->get("AlwaysDay");
 			$this->blockbreakparticles = $this->getLeverylConfigValue("BlockBreakParticles", true);
