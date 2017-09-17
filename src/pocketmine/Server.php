@@ -278,7 +278,6 @@ class Server
 	/** @var bool */
 	public $blockbreakparticles;
 
- public $fireSpread;
 	/**
 	 * @return string
 	 */
@@ -1599,6 +1598,7 @@ class Server
 			$this->forceLanguage = $this->getProperty("settings.force-language", false);
 			$this->baseLang = new BaseLang($this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE));
 			//$this->logger->info($this->getLanguage()->translateString("language.selected", [$this->getLanguage()->getName(), $this->getLanguage()->getLang()]));
+
 			$this->memoryManager = new MemoryManager($this);
 			$startupmsg = "\n       §8##§7\§b    _                           _ §r\n      §8##§7 /§b   | | _____   _____ _ __ _   _| |§r\n     §8##§7 /§b    | |/ _ \ \ / / _ \ '__| | | | |§r\n    §8##§7 /§b     | |  __/\ V /  __/ |  | |_| | |§r\n   §8##§7 /§b      |_|\___| \_/ \___|_|   \__, |_|§r\n  §8##§7 /§b                              |___/   §r\n §8#########§7\ §bGitHub.com/LeverylTeam/Leveryl  §r\n §7\________/§r";
 			$lang = $this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE);
@@ -1614,7 +1614,6 @@ class Server
 
 			$this->alwaysday = $this->leverylconfig->get("AlwaysDay");
 			$this->blockbreakparticles = $this->getLeverylConfigValue("BlockBreakParticles", true);
-			$this->fireSpread = $this->getLeverylConfigValue("fireSpread", true);
 
 			if($this->logger instanceof MainLogger) {
 				$this->logger->directSend($startupmsg);
@@ -1826,8 +1825,6 @@ class Server
 
 			if($this->getProperty("ticks-per.autosave", 6000) > 0) {
 				$this->autoSaveTicks = (int)$this->getProperty("ticks-per.autosave", 6000);
-
-
 			}
 
 			$this->enablePlugins(PluginLoadOrder::POSTWORLD);
