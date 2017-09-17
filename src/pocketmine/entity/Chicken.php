@@ -21,30 +21,43 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Chicken extends Animal
-{
+use pocketmine\entity\behavior\{StrollBehavior, RandomLookaroundBehavior, LookAtPlayerBehavior, PanicBehavior};
+
+class Chicken extends Animal {
 	const NETWORK_ID = 10;
 
 	public $width = 0.6;
 	public $length = 0.6;
-	public $height = 1.8;
+	public $height = 0;
 
 	public $dropExp = [1, 3];
+	
+	public function initEntity(){
+		$this->addBehavior(new PanicBehavior($this, 0.25, 2.0));
+		$this->addBehavior(new StrollBehavior($this));
+		$this->addBehavior(new LookAtPlayerBehavior($this));
+		$this->addBehavior(new RandomLookaroundBehavior($this));
+		
+		parent::initEntity();
+	}
 
-	public function getName(): string
-	{
+	/**
+	 * @return string
+	 */
+	public function getName() : string{
 		return "Chicken";
 	}
 
-	public function spawnTo(Player $player)
-	{
+	/**
+	 * @param Player $player
+	 */
+	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
+		$pk->eid = $this->getId();
 		$pk->type = Chicken::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
@@ -59,23 +72,13 @@ class Chicken extends Animal
 		parent::spawnTo($player);
 	}
 
-	public function getDrops()
-	{
-		$drops = [];
-		if($this->lastDamageCause instanceof EntityDamageByEntityEvent and $this->lastDamageCause->getEntity() instanceof Player) {
-
-			switch(\mt_rand(0, 2)) {
-				case 0:
-					$drops[] = ItemItem::get(ItemItem::RAW_CHICKEN, 0, 1);
-					break;
-				case 1:
-					$drops[] = ItemItem::get(ItemItem::FEATHER, 0, 1);
-					break;
-				case 2:
-					$drops[] = ItemItem::get(ItemItem::FEATHER, 0, 2);
-					break;
-			}
-		}
+	/**
+	 * @return array
+	 */
+	public function getDrops(){
+		$drops = [ItemItem::get(ItemItem::FEATHER, 0, mt_rand(0, 2))
+		];
+		$drops[] = ItemItem::get(ItemItem::RAW_CHICKEN, 0, 1);
 
 		return $drops;
 	}

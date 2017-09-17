@@ -49,7 +49,7 @@ class EnderDragon extends Monster {
 	 */
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
+		$pk->eid = $this->getId();
 		$pk->type = self::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;

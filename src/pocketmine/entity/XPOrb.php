@@ -17,7 +17,6 @@
  * @author iTX Technologies
  * @link https://itxtech.org
  *
- * Modified for Leveryl.
  */
 
 namespace pocketmine\entity;
@@ -27,8 +26,7 @@ use pocketmine\level\sound\ExpPickupSound;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class XPOrb extends Entity
-{
+class XPOrb extends Entity {
 	const NETWORK_ID = 69;
 
 	public $width = 0.25;
@@ -42,17 +40,20 @@ class XPOrb extends Entity
 
 	protected $range = 6;
 
-	public function initEntity()
-	{
+	public function initEntity(){
 		parent::initEntity();
-		if(isset($this->namedtag->Experience)) {
+		if(isset($this->namedtag->Experience)){
 			$this->experience = $this->namedtag["Experience"];
-		} else $this->close();
+		}else $this->close();
 	}
 
-	public function onUpdate($currentTick)
-	{
-		if($this->closed) {
+	/**
+	 * @param $currentTick
+	 *
+	 * @return bool
+	 */
+	public function onUpdate($currentTick){
+		if($this->closed){
 			return false;
 		}
 
@@ -66,7 +67,7 @@ class XPOrb extends Entity
 
 		$this->age++;
 
-		if($this->age > 1200) {
+		if($this->age > 1200){
 			$this->kill();
 			$this->close();
 			$hasUpdate = true;
@@ -74,16 +75,16 @@ class XPOrb extends Entity
 
 		$minDistance = PHP_INT_MAX;
 		$target = null;
-		foreach($this->getViewers() as $p) {
-			if(!$p->isSpectator() and $p->isAlive()) {
-				if(($dist = $p->distance($this)) < $minDistance and $dist < $this->range) {
+		foreach($this->getViewers() as $p){
+			if(!$p->isSpectator() and $p->isAlive()){
+				if(($dist = $p->distance($this)) < $minDistance and $dist < $this->range){
 					$target = $p;
 					$minDistance = $dist;
 				}
 			}
 		}
 
-		if($target instanceof Player) {
+		if($target !== null){
 			$moveSpeed = 0.7;
 			$motX = ($target->getX() - $this->x) / 8;
 			$motY = ($target->getY() + $target->getEyeHeight() - $this->y) / 8;
@@ -91,26 +92,34 @@ class XPOrb extends Entity
 			$motSqrt = sqrt($motX * $motX + $motY * $motY + $motZ * $motZ);
 			$motC = 1 - $motSqrt;
 
-			if($motC > 0) {
+			if($motC > 0){
 				$motC *= $motC;
 				$this->motionX = $motX / $motSqrt * $motC * $moveSpeed;
 				$this->motionY = $motY / $motSqrt * $motC * $moveSpeed;
 				$this->motionZ = $motZ / $motSqrt * $motC * $moveSpeed;
 			}
 
-			/** @noinspection PhpUndefinedVariableInspection */ // $dist can't be undefined. cuz of line 69.
-			if($dist <= 1.3) {
-				if($target->canPickupXp()) {
-					$target->getServer()->getPluginManager()->callEvent($ev = new PlayerPickupExpOrbEvent($target, $this->getExperience()));
-					if(!$ev->isCancelled()) {
+			$this->motionY -= $this->gravity;
+
+			if($this->checkObstruction($this->x, $this->y, $this->z)){
+				$hasUpdate = true;
+			}
+
+			if($this->isInsideOfSolid()){
+				$this->setPosition($target);
+			}
+
+			if($minDistance <= 1.3){
+				if($this->getLevel()->getServer()->expEnabled and $target->canPickupXp()){
+					$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new PlayerPickupExpOrbEvent($target, $this->getExperience()));
+					if(!$ev->isCancelled()){
 						$this->kill();
 						$this->close();
-						if($this->getExperience() > 0) {
-							$target->getLevel()->addSound(new ExpPickupSound($target, mt_rand(0, 1000)));
+						if($this->getExperience() > 0){
+							$target->level->addSound(new ExpPickupSound($target, mt_rand(0, 1000)));
 							$target->addXp($this->getExperience());
 							$target->resetXpCooldown();
 						}
-						return true;
 					}
 				}
 			}
@@ -125,27 +134,37 @@ class XPOrb extends Entity
 		return $hasUpdate or !$this->onGround or abs($this->motionX) > 0.00001 or abs($this->motionY) > 0.00001 or abs($this->motionZ) > 0.00001;
 	}
 
-	public function canCollideWith(Entity $entity)
-	{
+	/**
+	 * @param Entity $entity
+	 *
+	 * @return bool
+	 */
+	public function canCollideWith(Entity $entity){
 		return false;
 	}
 
-	public function setExperience($exp)
-	{
+	/**
+	 * @param $exp
+	 */
+	public function setExperience($exp){
 		$this->experience = $exp;
 	}
 
-	public function getExperience()
-	{
+	/**
+	 * @return int
+	 */
+	public function getExperience(){
 		return $this->experience;
 	}
 
-	public function spawnTo(Player $player)
-	{
+	/**
+	 * @param Player $player
+	 */
+	public function spawnTo(Player $player){
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_NO_AI, true);
 		$pk = new AddEntityPacket();
 		$pk->type = XPOrb::NETWORK_ID;
-		$pk->entityRuntimeId = $this->getId();
+		$pk->eid = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

@@ -21,28 +21,42 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\network\mcpe\protocol\AddPlayerPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Wolf extends Animal
-{
+use pocketmine\entity\behavior\{StrollBehavior, RandomLookaroundBehavior, LookAtPlayerBehavior, PanicBehavior};
+
+class Wolf extends Animal {
 	const NETWORK_ID = 14;
 
 	public $width = 0.3;
 	public $length = 0.9;
-	public $height = 1.8;
+	public $height = 0;
 
 	public $dropExp = [1, 3];
+	
+	public function initEntity(){
+		$this->addBehavior(new PanicBehavior($this, 0.25, 2.0));
+		$this->addBehavior(new StrollBehavior($this));
+		$this->addBehavior(new LookAtPlayerBehavior($this));
+		$this->addBehavior(new RandomLookaroundBehavior($this));
+		
+		parent::initEntity();
+	}
 
-	public function getName(): string
-	{
+	/**
+	 * @return string
+	 */
+	public function getName() : string{
 		return "Wolf";
 	}
 
-	public function spawnTo(Player $player)
-	{
-		$pk = new AddPlayerPacket();
-		$pk->entityRuntimeId = $this->getId();
+	/**
+	 * @param Player $player
+	 */
+	public function spawnTo(Player $player){
+		$pk = new AddEntityPacket();
+		$pk->eid = $this->getId();
 		$pk->type = Wolf::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;

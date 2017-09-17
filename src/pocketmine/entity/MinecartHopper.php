@@ -10,7 +10,7 @@
  * \_____/ |_____| |_|  \_| |_| /_____/  /_/     /_____/
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
@@ -21,31 +21,33 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\level\Level;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class EnderCrystal extends Vehicle
-{
-	const NETWORK_ID = 71;
+class MinecartHopper extends Minecart {
+	const NETWORK_ID = 96;
 
-	public $height = 0.7;
-	public $width = 1.6;
-
-	public $gravity = 0.5;
-	public $drag = 0.1;
-
-	public function __construct(Level $level, CompoundTag $nbt)
-	{
-		parent::__construct($level, $nbt);
+	/**
+	 * @return string
+	 */
+	public function getName() : string{
+		return "Minecart Hopper";
 	}
 
-	public function spawnTo(Player $player)
-	{
+	/**
+	 * @return int
+	 */
+	public function getType() : int{
+		return self::TYPE_HOPPER;
+	}
+
+	/**
+	 * @param Player $player
+	 */
+	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = EnderCrystal::NETWORK_ID;
+		$pk->eid = $this->getId();
+		$pk->type = MinecartHopper::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -57,6 +59,6 @@ class EnderCrystal extends Vehicle
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 
-		parent::spawnTo($player);
+		Entity::spawnTo($player);
 	}
 }

@@ -2,36 +2,36 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ *
+ *    _______                    _
+ *   |__   __|                  (_)
+ *      | |_   _ _ __ __ _ _ __  _  ___
+ *      | | | | | '__/ _` | '_ \| |/ __|
+ *      | | |_| | | | (_| | | | | | (__
+ *      |_|\__,_|_|  \__,_|_| |_|_|\___|
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author TuranicTeam
+ * @link https://github.com/TuranicTeam/Turanic
  *
  *
 */
 
-declare(strict_types = 1);
-
 namespace pocketmine\entity;
 
-use pocketmine\block\Block;
 use pocketmine\level\Level;
-use pocketmine\level\particle\DestroyBlockParticle;
+use pocketmine\level\particle\ItemBreakParticle;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 
-class Snowball extends Projectile
-{
+class Snowball extends Projectile {
 	const NETWORK_ID = 81;
 
 	public $width = 0.25;
@@ -41,14 +41,24 @@ class Snowball extends Projectile
 	protected $gravity = 0.03;
 	protected $drag = 0.01;
 
-	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null)
-	{
+	/**
+	 * Snowball constructor.
+	 *
+	 * @param Level       $level
+	 * @param CompoundTag $nbt
+	 * @param Entity|null $shootingEntity
+	 */
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
 		parent::__construct($level, $nbt, $shootingEntity);
 	}
 
-	public function onUpdate($currentTick)
-	{
-		if($this->closed) {
+	/**
+	 * @param $currentTick
+	 *
+	 * @return bool
+	 */
+	public function onUpdate($currentTick){
+		if($this->closed){
 			return false;
 		}
 
@@ -56,12 +66,10 @@ class Snowball extends Projectile
 
 		$hasUpdate = parent::onUpdate($currentTick);
 
-		if($this->age > 1200 or $this->isCollided) {
-			if($this->isAlive()) {
-				$this->getLevel()->addParticle(new DestroyBlockParticle($this, Block::get(Block::SNOW)));
-				$this->kill();
-				$hasUpdate = true;
-			}
+		if($this->age > 1200 or $this->isCollided){
+		        $this->level->addParticle(new ItemBreakParticle($this->add(0, 1, 0), ItemItem::get(ItemItem::SNOWBALL)));
+			$this->kill();
+			$hasUpdate = true;
 		}
 
 		$this->timings->stopTiming();
@@ -69,11 +77,13 @@ class Snowball extends Projectile
 		return $hasUpdate;
 	}
 
-	public function spawnTo(Player $player)
-	{
+	/**
+	 * @param Player $player
+	 */
+	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = Snowball::NETWORK_ID;
-		$pk->entityRuntimeId = $this->getId();
+		$pk->eid = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

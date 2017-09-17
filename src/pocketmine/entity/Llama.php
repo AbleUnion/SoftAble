@@ -16,8 +16,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author GenisysPro
- * @link https://github.com/GenisysPro/GenisysPro
+ * @author Turanic
+ * @link https://github.com/Turanic/Turanic
  *
  *
  */
@@ -27,6 +27,8 @@ namespace pocketmine\entity;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
+
+use pocketmine\entity\behavior\{StrollBehavior, RandomLookaroundBehavior, LookAtPlayerBehavior, PanicBehavior};
 
 class Llama extends Animal {
 	const NETWORK_ID = 29;
@@ -50,6 +52,11 @@ class Llama extends Animal {
 	}
 
 	public function initEntity(){
+        $this->addBehavior(new PanicBehavior($this, 0.25, 2.0));
+        $this->addBehavior(new StrollBehavior($this));
+        $this->addBehavior(new LookAtPlayerBehavior($this));
+        $this->addBehavior(new RandomLookaroundBehavior($this));
+
 		$this->setMaxHealth(30);
 		$this->setDataProperty(Entity::DATA_VARIANT, Entity::DATA_TYPE_INT, rand(0, 3));
 		parent::initEntity();
@@ -60,8 +67,8 @@ class Llama extends Animal {
 	 */
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = Llama::NETWORK_ID;
+		$pk->eid = $this->getId();
+		$pk->type = self::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

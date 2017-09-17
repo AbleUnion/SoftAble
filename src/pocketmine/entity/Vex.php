@@ -16,8 +16,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author GenisysPro
- * @link https://github.com/GenisysPro/GenisysPro
+ * @author Turanic
+ * @link https://github.com/Turanic/Turanic
  *
  *
  */
@@ -54,7 +54,7 @@ class Vex extends Monster {
 	 */
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
+		$pk->eid = $this->getId();
 		$pk->type = Vex::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
