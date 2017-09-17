@@ -277,6 +277,7 @@ class Server
 	public $alwaysday;
 	/** @var bool */
 	public $blockbreakparticles;
+	public $fireSpread;
 
 	/**
 	 * @return string
@@ -1611,6 +1612,8 @@ class Server
 				@file_put_contents($this->dataPath . "leveryl.yml", $content);
 			}
 			$this->leverylconfig = new Config($this->dataPath . "leveryl.yml", Config::YAML, []);
+			
+			$this->fireSpread = $this->getLeverylConfigValue("fireSpread", true);
 
 			$this->alwaysday = $this->leverylconfig->get("AlwaysDay");
 			$this->blockbreakparticles = $this->getLeverylConfigValue("BlockBreakParticles", true);
