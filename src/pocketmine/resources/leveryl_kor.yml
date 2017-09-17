@@ -73,3 +73,8 @@ LightningTime: 200
 AlwaysDay:
 # LevelName: true/false
  nether: true
+ 
+ # MobAI for Entities
+# This Feature INDEV(can not work corretly)
+mob-ai:
+ enable: false
