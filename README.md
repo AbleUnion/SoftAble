@@ -8,6 +8,13 @@ __A highly customisable, open source server software for Minecraft: Pocket Editi
 Head over to the [documentation site](http://pmmp.readthedocs.org/).
 If you don't find what you're looking for there, [talk to a human](#discussion). Please do not use our issue tracker for support requests.
 
+### 기능
+- [X] 옛날플긴 로드가능
+- [ ] 자동로더
+- [ ] 더많은 기능
+- [ ] 몹ai
+- [ ] 더많은 블럭과 아이템
+
 ### Discussion
 - [Forums](https://forums.pmmp.io/)
 - [#pmmp + #pocketmine channel IRC](http://webchat.freenode.net/?channels=pmmp,pocketmine)
