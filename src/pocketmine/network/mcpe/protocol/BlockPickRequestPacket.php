@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 
 namespace pocketmine\network\mcpe\protocol;
@@ -29,30 +29,33 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class BlockPickRequestPacket extends DataPacket
-{
+class BlockPickRequestPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::BLOCK_PICK_REQUEST_PACKET;
 
-	public $tileX;
-	public $tileY;
-	public $tileZ;
+	/** @var int */
+	public $blockX;
+	/** @var int */
+	public $blockY;
+	/** @var int */
+	public $blockZ;
+	/** @var bool */
+	public $addUserData = false;
+	/** @var int */
 	public $hotbarSlot;
 
-	public function decode()
-	{
-		$this->getSignedBlockPosition($this->tileX, $this->tileY, $this->tileZ);
+	protected function decodePayload(){
+		$this->getSignedBlockPosition($this->blockX, $this->blockY, $this->blockZ);
+		$this->addUserData = $this->getBool();
 		$this->hotbarSlot = $this->getByte();
 	}
 
-	public function encode()
-	{
-		$this->reset();
-		$this->putSignedBlockPosition($this->tileX, $this->tileY, $this->tileZ);
+	protected function encodePayload(){
+		$this->putSignedBlockPosition($this->blockX, $this->blockY, $this->blockZ);
+		$this->putBool($this->addUserData);
 		$this->putByte($this->hotbarSlot);
 	}
 
-	public function handle(NetworkSession $session): bool
-	{
+	public function handle(NetworkSession $session) : bool{
 		return $session->handleBlockPickRequest($this);
 	}
 }

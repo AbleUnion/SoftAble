@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\format\io;
 
@@ -28,11 +28,10 @@ use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\AsyncTask;
 
-interface LevelProvider
-{
+interface LevelProvider{
 
 	/**
-	 * @param Level $level
+	 * @param Level  $level
 	 * @param string $path
 	 */
 	public function __construct(Level $level, string $path);
@@ -42,19 +41,19 @@ interface LevelProvider
 	 *
 	 * @return string
 	 */
-	public static function getProviderName(): string;
+	public static function getProviderName() : string;
 
 	/**
 	 * Gets the build height limit of this world
 	 *
 	 * @return int
 	 */
-	public function getWorldHeight(): int;
+	public function getWorldHeight() : int;
 
 	/**
 	 * @return string
 	 */
-	public function getPath(): string;
+	public function getPath() : string;
 
 	/**
 	 * Tells if the path is a valid level.
@@ -64,15 +63,15 @@ interface LevelProvider
 	 *
 	 * @return bool
 	 */
-	public static function isValid(string $path): bool;
+	public static function isValid(string $path) : bool;
 
 	/**
 	 * Generate the needed files in the path given
 	 *
-	 * @param string $path
-	 * @param string $name
-	 * @param int $seed
-	 * @param string $generator
+	 * @param string  $path
+	 * @param string  $name
+	 * @param int     $seed
+	 * @param string  $generator
 	 * @param array[] $options
 	 */
 	public static function generate(string $path, string $name, int $seed, string $generator, array $options = []);
@@ -82,19 +81,19 @@ interface LevelProvider
 	 *
 	 * @return string
 	 */
-	public function getGenerator(): string;
+	public function getGenerator() : string;
 
 	/**
 	 * @return array
 	 */
-	public function getGeneratorOptions(): array;
+	public function getGeneratorOptions() : array;
 
 	/**
 	 * Gets the Chunk object
 	 * This method must be implemented by all the level formats.
 	 *
-	 * @param int $chunkX
-	 * @param int $chunkZ
+	 * @param int  $chunkX
+	 * @param int  $chunkZ
 	 * @param bool $create
 	 *
 	 * @return Chunk|null
@@ -102,8 +101,8 @@ interface LevelProvider
 	public function getChunk(int $chunkX, int $chunkZ, bool $create = false);
 
 	/**
-	 * @param int $chunkX
-	 * @param int $chunkZ
+	 * @param int   $chunkX
+	 * @param int   $chunkZ
 	 * @param Chunk $chunk
 	 */
 	public function setChunk(int $chunkX, int $chunkZ, Chunk $chunk);
@@ -114,27 +113,27 @@ interface LevelProvider
 	 *
 	 * @return bool
 	 */
-	public function saveChunk(int $chunkX, int $chunkZ): bool;
+	public function saveChunk(int $chunkX, int $chunkZ) : bool;
 
 	public function saveChunks();
 
 	/**
-	 * @param int $chunkX
-	 * @param int $chunkZ
+	 * @param int  $chunkX
+	 * @param int  $chunkZ
 	 * @param bool $create
 	 *
 	 * @return bool
 	 */
-	public function loadChunk(int $chunkX, int $chunkZ, bool $create = false): bool;
+	public function loadChunk(int $chunkX, int $chunkZ, bool $create = false) : bool;
 
 	/**
-	 * @param int $chunkX
-	 * @param int $chunkZ
+	 * @param int  $chunkX
+	 * @param int  $chunkZ
 	 * @param bool $safe
 	 *
 	 * @return bool
 	 */
-	public function unloadChunk(int $chunkX, int $chunkZ, bool $safe = true): bool;
+	public function unloadChunk(int $chunkX, int $chunkZ, bool $safe = true) : bool;
 
 	public function unloadChunks();
 
@@ -144,7 +143,7 @@ interface LevelProvider
 	 *
 	 * @return bool
 	 */
-	public function isChunkLoaded(int $chunkX, int $chunkZ): bool;
+	public function isChunkLoaded(int $chunkX, int $chunkZ) : bool;
 
 	/**
 	 * @param int $chunkX
@@ -152,7 +151,7 @@ interface LevelProvider
 	 *
 	 * @return bool
 	 */
-	public function isChunkGenerated(int $chunkX, int $chunkZ): bool;
+	public function isChunkGenerated(int $chunkX, int $chunkZ) : bool;
 
 	/**
 	 * @param int $chunkX
@@ -160,7 +159,7 @@ interface LevelProvider
 	 *
 	 * @return bool
 	 */
-	public function isChunkPopulated(int $chunkX, int $chunkZ): bool;
+	public function isChunkPopulated(int $chunkX, int $chunkZ) : bool;
 
 	/**
 	 * Requests a MC: PE network chunk to be sent
@@ -170,37 +169,37 @@ interface LevelProvider
 	 *
 	 * @return AsyncTask
 	 */
-	public function requestChunkTask(int $x, int $z): AsyncTask;
+	public function requestChunkTask(int $x, int $z) : AsyncTask;
 
 	/**
 	 * @return string
 	 */
-	public function getName();
+	public function getName() : string;
 
 	/**
-	 * @return int|string int, or the string numeric representation of a long in 32-bit systems
+	 * @return int
 	 */
-	public function getTime();
+	public function getTime() : int;
 
 	/**
-	 * @param int|string $value int, or the string numeric representation of a long in 32-bit systems
+	 * @param int
 	 */
-	public function setTime($value);
+	public function setTime(int $value);
 
 	/**
-	 * @return int|string int, or the string numeric representation of a long in 32-bit systems
+	 * @return int
 	 */
-	public function getSeed();
+	public function getSeed() : int;
 
 	/**
-	 * @param int|string $value int, or the string numeric representation of a long in 32-bit systems
+	 * @param int
 	 */
-	public function setSeed($value);
+	public function setSeed(int $value);
 
 	/**
 	 * @return Vector3
 	 */
-	public function getSpawn(): Vector3;
+	public function getSpawn() : Vector3;
 
 	/**
 	 * @param Vector3 $pos
@@ -210,19 +209,15 @@ interface LevelProvider
 	/**
 	 * @return Chunk[]
 	 */
-	public function getLoadedChunks(): array;
+	public function getLoadedChunks() : array;
 
 	public function doGarbageCollection();
 
 	/**
 	 * @return Level
 	 */
-	public function getLevel();
+	public function getLevel() : Level;
 
 	public function close();
-
-	public function updateGameRule($t, $s);
-
-	public function getGameRule($rule);
 
 }

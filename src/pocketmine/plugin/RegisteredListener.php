@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\plugin;
 
@@ -28,8 +28,7 @@ use pocketmine\event\Event;
 use pocketmine\event\Listener;
 use pocketmine\event\TimingsHandler;
 
-class RegisteredListener
-{
+class RegisteredListener{
 
 	/** @var Listener */
 	private $listener;
@@ -51,15 +50,14 @@ class RegisteredListener
 
 
 	/**
-	 * @param Listener $listener
-	 * @param EventExecutor $executor
-	 * @param int $priority
-	 * @param Plugin $plugin
-	 * @param bool $ignoreCancelled
+	 * @param Listener       $listener
+	 * @param EventExecutor  $executor
+	 * @param int            $priority
+	 * @param Plugin         $plugin
+	 * @param bool           $ignoreCancelled
 	 * @param TimingsHandler $timings
 	 */
-	public function __construct(Listener $listener, EventExecutor $executor, $priority, Plugin $plugin, $ignoreCancelled, TimingsHandler $timings)
-	{
+	public function __construct(Listener $listener, EventExecutor $executor, int $priority, Plugin $plugin, bool $ignoreCancelled, TimingsHandler $timings){
 		$this->listener = $listener;
 		$this->priority = $priority;
 		$this->plugin = $plugin;
@@ -71,33 +69,29 @@ class RegisteredListener
 	/**
 	 * @return Listener
 	 */
-	public function getListener()
-	{
+	public function getListener() : Listener{
 		return $this->listener;
 	}
 
 	/**
 	 * @return Plugin
 	 */
-	public function getPlugin()
-	{
+	public function getPlugin() : Plugin{
 		return $this->plugin;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPriority()
-	{
+	public function getPriority() : int{
 		return $this->priority;
 	}
 
 	/**
 	 * @param Event $event
 	 */
-	public function callEvent(Event $event)
-	{
-		if($event instanceof Cancellable and $event->isCancelled() and $this->isIgnoringCancelled()) {
+	public function callEvent(Event $event){
+		if($event instanceof Cancellable and $event->isCancelled() and $this->isIgnoringCancelled()){
 			return;
 		}
 		$this->timings->startTiming();
@@ -105,16 +99,14 @@ class RegisteredListener
 		$this->timings->stopTiming();
 	}
 
-	public function __destruct()
-	{
+	public function __destruct(){
 		$this->timings->remove();
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isIgnoringCancelled()
-	{
+	public function isIgnoringCancelled() : bool{
 		return $this->ignoreCancelled === true;
 	}
 }

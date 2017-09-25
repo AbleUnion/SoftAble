@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,40 +19,39 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\plugin;
 
 /**
  * Handles different types of plugins
  */
-interface PluginLoader
-{
+interface PluginLoader{
 
 	/**
 	 * Loads the plugin contained in $file
 	 *
 	 * @param string $file
 	 *
-	 * @return Plugin
+	 * @return Plugin|null
 	 */
-	public function loadPlugin($file);
+	public function loadPlugin(string $file);
 
 	/**
 	 * Gets the PluginDescription from the file
 	 *
 	 * @param string $file
 	 *
-	 * @return PluginDescription
+	 * @return null|PluginDescription
 	 */
-	public function getPluginDescription($file);
+	public function getPluginDescription(string $file);
 
 	/**
 	 * Returns the filename regex patterns that this loader accepts
 	 *
 	 * @return string
 	 */
-	public function getPluginFilters();
+	public function getPluginFilters() : string;
 
 	/**
 	 * @param Plugin $plugin

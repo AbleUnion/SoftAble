@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\inventory;
 
@@ -28,20 +28,18 @@ use pocketmine\network\mcpe\protocol\ContainerClosePacket;
 use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use pocketmine\Player;
 
-abstract class ContainerInventory extends BaseInventory
-{
-	public function onOpen(Player $who)
-	{
+abstract class ContainerInventory extends BaseInventory{
+	public function onOpen(Player $who) : void{
 		parent::onOpen($who);
 		$pk = new ContainerOpenPacket();
-		$pk->windowid = $who->getWindowId($this);
-		$pk->type = $this->getType()->getNetworkType();
+		$pk->windowId = $who->getWindowId($this);
+		$pk->type = $this->getNetworkType();
 		$holder = $this->getHolder();
-		if($holder instanceof Vector3) {
+		if($holder instanceof Vector3){
 			$pk->x = $holder->getX();
 			$pk->y = $holder->getY();
 			$pk->z = $holder->getZ();
-		} else {
+		}else{
 			$pk->x = $pk->y = $pk->z = 0;
 		}
 
@@ -50,11 +48,16 @@ abstract class ContainerInventory extends BaseInventory
 		$this->sendContents($who);
 	}
 
-	public function onClose(Player $who)
-	{
+	public function onClose(Player $who) : void{
 		$pk = new ContainerClosePacket();
-		$pk->windowid = $who->getWindowId($this);
+		$pk->windowId = $who->getWindowId($this);
 		$who->dataPacket($pk);
 		parent::onClose($who);
 	}
+
+	/**
+	 * Returns the Minecraft PE inventory type used to show the inventory window to clients.
+	 * @return int
+	 */
+	abstract public function getNetworkType() : int;
 }

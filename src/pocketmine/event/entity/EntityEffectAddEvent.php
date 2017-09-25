@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,51 +19,53 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event\entity;
 
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 
-class EntityEffectAddEvent extends EntityEffectEvent
-{
+/**
+ * Called when an effect is added to an Entity.
+ */
+class EntityEffectAddEvent extends EntityEffectEvent{
 	public static $handlerList = null;
 
-	/** @var bool */
-	private $modify;
-	/** @var Effect */
+	/** @var Effect|null */
 	private $oldEffect;
 
-	public function __construct(Entity $entity, Effect $effect, $modify, $oldEffect)
-	{
+	/**
+	 * @param Entity      $entity
+	 * @param Effect      $effect
+	 * @param Effect|null $oldEffect
+	 */
+	public function __construct(Entity $entity, Effect $effect, Effect $oldEffect = null){
 		parent::__construct($entity, $effect);
-		$this->modify = $modify;
 		$this->oldEffect = $oldEffect;
 	}
 
-	public function willModify(): bool
-	{
-		return $this->modify;
+	/**
+	 * Returns whether the effect addition will replace an existing effect already applied to the entity.
+	 *
+	 * @return bool
+	 */
+	public function willModify() : bool{
+		return $this->hasOldEffect();
 	}
 
-	public function setWillModify(bool $modify)
-	{
-		$this->modify = $modify;
-	}
-
-	public function hasOldEffect(): bool
-	{
+	/**
+	 * @return bool
+	 */
+	public function hasOldEffect() : bool{
 		return $this->oldEffect instanceof Effect;
 	}
 
 	/**
 	 * @return Effect|null
 	 */
-	public function getOldEffect()
-	{
+	public function getOldEffect(){
 		return $this->oldEffect;
 	}
-
 
 }

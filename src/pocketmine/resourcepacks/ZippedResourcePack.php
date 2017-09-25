@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,14 +19,13 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 
 namespace pocketmine\resourcepacks;
 
 
-class ZippedResourcePack implements ResourcePack
-{
+class ZippedResourcePack implements ResourcePack{
 
 	/**
 	 * Performs basic validation checks on a resource pack's manifest.json.
@@ -35,9 +34,8 @@ class ZippedResourcePack implements ResourcePack
 	 * @param \stdClass $manifest
 	 * @return bool
 	 */
-	public static function verifyManifest(\stdClass $manifest)
-	{
-		if(!isset($manifest->format_version) or !isset($manifest->header) or !isset($manifest->modules)) {
+	public static function verifyManifest(\stdClass $manifest) : bool{
+		if(!isset($manifest->format_version) or !isset($manifest->header) or !isset($manifest->modules)){
 			return false;
 		}
 
@@ -65,23 +63,22 @@ class ZippedResourcePack implements ResourcePack
 	/**
 	 * @param string $zipPath Path to the resource pack zip
 	 */
-	public function __construct(string $zipPath)
-	{
+	public function __construct(string $zipPath){
 		$this->path = $zipPath;
 
-		if(!file_exists($zipPath)) {
+		if(!file_exists($zipPath)){
 			throw new \InvalidArgumentException("Could not open resource pack $zipPath: file not found");
 		}
 
 		$archive = new \ZipArchive();
-		if(($openResult = $archive->open($zipPath)) !== true) {
+		if(($openResult = $archive->open($zipPath)) !== true){
 			throw new \InvalidStateException("Encountered ZipArchive error code $openResult while trying to open $zipPath");
 		}
 
-		if(($manifestData = $archive->getFromName("manifest.json")) === false) {
-			if($archive->locateName("pack_manifest.json") !== false) {
+		if(($manifestData = $archive->getFromName("manifest.json")) === false){
+			if($archive->locateName("pack_manifest.json") !== false){
 				throw new \InvalidStateException("Could not load resource pack from $zipPath: unsupported old pack format");
-			} else {
+			}else{
 				throw new \InvalidStateException("Could not load resource pack from $zipPath: manifest.json not found in the archive root");
 			}
 		}
@@ -89,7 +86,7 @@ class ZippedResourcePack implements ResourcePack
 		$archive->close();
 
 		$manifest = json_decode($manifestData);
-		if(!self::verifyManifest($manifest)) {
+		if(!self::verifyManifest($manifest)){
 			throw new \InvalidStateException("Could not load resource pack from $zipPath: manifest.json is invalid or incomplete");
 		}
 
@@ -98,47 +95,38 @@ class ZippedResourcePack implements ResourcePack
 		$this->fileResource = fopen($zipPath, "rb");
 	}
 
-	public function __destruct()
-	{
+	public function __destruct(){
 		fclose($this->fileResource);
 	}
 
-	public function getPackName(): string
-	{
+	public function getPackName() : string{
 		return $this->manifest->header->name;
 	}
 
-	public function getPackVersion(): string
-	{
+	public function getPackVersion() : string{
 		return implode(".", $this->manifest->header->version);
 	}
 
-	public function getPackId(): string
-	{
+	public function getPackId() : string{
 		return $this->manifest->header->uuid;
 	}
 
-	public function getPackSize(): int
-	{
+	public function getPackSize() : int{
 		return filesize($this->path);
 	}
 
-	public function getSha256(bool $cached = true): string
-	{
-		if($this->sha256 === null or !$cached) {
+	public function getSha256(bool $cached = true) : string{
+		if($this->sha256 === null or !$cached){
 			$this->sha256 = hash_file("sha256", $this->path, true);
 		}
-
 		return $this->sha256;
 	}
 
-	public function getPackChunk(int $start, int $length): string
-	{
+	public function getPackChunk(int $start, int $length) : string{
 		fseek($this->fileResource, $start);
-		if(feof($this->fileResource)) {
+		if(feof($this->fileResource)){
 			throw new \RuntimeException("Requested a resource pack chunk with invalid start offset");
 		}
-
 		return fread($this->fileResource, $length);
 	}
 }

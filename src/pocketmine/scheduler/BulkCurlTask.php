@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\scheduler;
 
@@ -32,8 +32,7 @@ use pocketmine\utils\Utils;
  *
  * @package pocketmine\scheduler
  */
-class BulkCurlTask extends AsyncTask
-{
+class BulkCurlTask extends AsyncTask{
 	private $operations;
 
 	/**
@@ -43,23 +42,21 @@ class BulkCurlTask extends AsyncTask
 	 * "timeout", "extraHeaders" and "extraOpts". Documentation of these options are same as those in
 	 * {@link Utils::simpleCurl}.
 	 *
-	 * @param array $operations
+	 * @param array      $operations
 	 * @param mixed|null $complexData
 	 */
-	public function __construct(array $operations, $complexData = null)
-	{
-		parent::__construct($complexData);
+	public function __construct(array $operations, $complexData = null){
+		$this->storeLocal($complexData);
 		$this->operations = serialize($operations);
 	}
 
-	public function onRun()
-	{
+	public function onRun(){
 		$operations = unserialize($this->operations);
 		$results = [];
-		foreach($operations as $op) {
-			try {
+		foreach($operations as $op){
+			try{
 				$results[] = Utils::simpleCurl($op["page"], $op["timeout"] ?? 10, $op["extraHeaders"] ?? [], $op["extraOpts"] ?? []);
-			} catch(\RuntimeException $e) {
+			}catch(\RuntimeException $e){
 				$results[] = $e;
 			}
 		}

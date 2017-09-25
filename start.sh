@@ -2,7 +2,6 @@
 DIR="$(cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 cd "$DIR"
 
-# Automatically restart the server
 DO_LOOP="no"
 
 while getopts "p:f:l" OPTION 2> /dev/null; do
@@ -37,12 +36,10 @@ fi
 if [ "$POCKETMINE_FILE" == "" ]; then
 	if [ -f ./PocketMine-MP.phar ]; then
 		POCKETMINE_FILE="./PocketMine-MP.phar"
-	elif [ -f ./Leveryl*.phar ]; then
-		POCKETMINE_FILE="./Leveryl*.phar"
 	elif [ -f ./src/pocketmine/PocketMine.php ]; then
 		POCKETMINE_FILE="./src/pocketmine/PocketMine.php"
 	else
-		echo "Couldn't find a valid Leveryl installation"
+		echo "Couldn't find a valid PocketMine-MP installation"
 		exit 1
 	fi
 fi
@@ -60,9 +57,9 @@ while [ "$LOOPS" -eq 0 ] || [ "$DO_LOOP" == "yes" ]; do
 		if [ ${LOOPS} -gt 0 ]; then
 			echo "Restarted $LOOPS times"
 		fi 
-		echo "To escape the loop, press CTRL+C now. Otherwise, wait 2 seconds for the server to restart."
+		echo "To escape the loop, press CTRL+C now. Otherwise, wait 5 seconds for the server to restart."
 		echo ""
-		sleep 2
+		sleep 5
 		((LOOPS++))
 	fi
 done

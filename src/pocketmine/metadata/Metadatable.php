@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,24 +19,21 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\metadata;
 
 use pocketmine\plugin\Plugin;
 
-interface Metadatable
-{
+interface Metadatable{
 
 	/**
 	 * Sets a metadata value in the implementing object's metadata store.
 	 *
-	 * @param string $metadataKey
+	 * @param string        $metadataKey
 	 * @param MetadataValue $newMetadataValue
-	 *
-	 * @return void
 	 */
-	public function setMetadata($metadataKey, MetadataValue $newMetadataValue);
+	public function setMetadata(string $metadataKey, MetadataValue $newMetadataValue);
 
 	/**
 	 * Returns a list of previously set metadata values from the implementing
@@ -46,7 +43,7 @@ interface Metadatable
 	 *
 	 * @return MetadataValue[]
 	 */
-	public function getMetadata($metadataKey);
+	public function getMetadata(string $metadataKey);
 
 	/**
 	 * Tests to see whether the implementing object contains the given
@@ -56,7 +53,7 @@ interface Metadatable
 	 *
 	 * @return bool
 	 */
-	public function hasMetadata($metadataKey);
+	public function hasMetadata(string $metadataKey) : bool;
 
 	/**
 	 * Removes the given metadata value from the implementing object's
@@ -64,9 +61,7 @@ interface Metadatable
 	 *
 	 * @param string $metadataKey
 	 * @param Plugin $owningPlugin
-	 *
-	 * @return void
 	 */
-	public function removeMetadata($metadataKey, Plugin $owningPlugin);
+	public function removeMetadata(string $metadataKey, Plugin $owningPlugin);
 
 }

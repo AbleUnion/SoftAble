@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
 
@@ -28,36 +28,37 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class ContainerOpenPacket extends DataPacket
-{
+class ContainerOpenPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::CONTAINER_OPEN_PACKET;
 
-	public $windowid;
+	/** @var int */
+	public $windowId;
+	/** @var int */
 	public $type;
+	/** @var int */
 	public $x;
+	/** @var int */
 	public $y;
+	/** @var int */
 	public $z;
+	/** @var int */
 	public $entityUniqueId = -1;
 
-	public function decode()
-	{
-		$this->windowid = $this->getByte();
+	protected function decodePayload(){
+		$this->windowId = $this->getByte();
 		$this->type = $this->getByte();
 		$this->getBlockPosition($this->x, $this->y, $this->z);
 		$this->entityUniqueId = $this->getEntityUniqueId();
 	}
 
-	public function encode()
-	{
-		$this->reset();
-		$this->putByte($this->windowid);
+	protected function encodePayload(){
+		$this->putByte($this->windowId);
 		$this->putByte($this->type);
 		$this->putBlockPosition($this->x, $this->y, $this->z);
 		$this->putEntityUniqueId($this->entityUniqueId);
 	}
 
-	public function handle(NetworkSession $session): bool
-	{
+	public function handle(NetworkSession $session) : bool{
 		return $session->handleContainerOpen($this);
 	}
 

@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,22 +19,22 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\TranslationContainer;
+use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class SpawnpointCommand extends VanillaCommand
-{
+class SpawnpointCommand extends VanillaCommand{
 
-	public function __construct($name)
-	{
+	public function __construct(string $name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.spawnpoint.description",
@@ -43,25 +43,24 @@ class SpawnpointCommand extends VanillaCommand
 		$this->setPermission("pocketmine.command.spawnpoint");
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args)
-	{
-		if(!$this->testPermission($sender)) {
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
+		if(!$this->testPermission($sender)){
 			return true;
 		}
 
 		$target = null;
 
-		if(count($args) === 0) {
-			if($sender instanceof Player) {
+		if(count($args) === 0){
+			if($sender instanceof Player){
 				$target = $sender;
-			} else {
+			}else{
 				$sender->sendMessage(TextFormat::RED . "Please provide a player!");
 
 				return true;
 			}
-		} else {
+		}else{
 			$target = $sender->getServer()->getPlayer($args[0]);
-			if($target === null) {
+			if($target === null){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.player.notFound"));
 
 				return true;
@@ -70,11 +69,11 @@ class SpawnpointCommand extends VanillaCommand
 
 		$level = $target->getLevel();
 
-		if(count($args) === 4) {
-			if($level !== null) {
+		if(count($args) === 4){
+			if($level !== null){
 				$pos = $sender instanceof Player ? $sender->getPosition() : $level->getSpawnLocation();
-				$x = (int)$this->getRelativeDouble($pos->x, $sender, $args[1]);
-				$y = $this->getRelativeDouble($pos->y, $sender, $args[2], 0, 128);
+				$x = $this->getRelativeDouble($pos->x, $sender, $args[1]);
+				$y = $this->getRelativeDouble($pos->y, $sender, $args[2], 0, Level::Y_MAX);
 				$z = $this->getRelativeDouble($pos->z, $sender, $args[3]);
 				$target->setSpawn(new Position($x, $y, $z, $level));
 
@@ -82,23 +81,20 @@ class SpawnpointCommand extends VanillaCommand
 
 				return true;
 			}
-		} elseif(count($args) <= 1) {
-			if($sender instanceof Player) {
-				$pos = new Position((int)$sender->x, (int)$sender->y, (int)$sender->z, $sender->getLevel());
+		}elseif(count($args) <= 1){
+			if($sender instanceof Player){
+				$pos = new Position((int) $sender->x, (int) $sender->y, (int) $sender->z, $sender->getLevel());
 				$target->setSpawn($pos);
 
 				Command::broadcastCommandMessage($sender, new TranslationContainer("commands.spawnpoint.success", [$target->getName(), round($pos->x, 2), round($pos->y, 2), round($pos->z, 2)]));
-
 				return true;
-			} else {
+			}else{
 				$sender->sendMessage(TextFormat::RED . "Please provide a player!");
 
 				return true;
 			}
 		}
 
-		$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-		return true;
+		throw new InvalidCommandSyntaxException();
 	}
 }

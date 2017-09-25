@@ -1,8 +1,13 @@
-﻿param (
-	[switch]$Loop = $true
+﻿[CmdletBinding(PositionalBinding=$false)]
+param (
+	[string]$php = "",
+	[switch]$Loop = $false,
+	[string][Parameter(ValueFromRemainingArguments)]$extraPocketMineArgs
 )
 
-if(Test-Path "bin\php\php.exe"){
+if($php -ne ""){
+	$binary = $php
+}elseif(Test-Path "bin\php\php.exe"){
 	$env:PHPRC = ""
 	$binary = "bin\php\php.exe"
 }else{
@@ -11,18 +16,16 @@ if(Test-Path "bin\php\php.exe"){
 
 if(Test-Path "PocketMine-MP.phar"){
 	$file = "PocketMine-MP.phar"
-}elseif(Test-Path "Leveryl*.phar"){
-	$file = "Leveryl*.phar"
-}elseif(Test-Path ".\src\pocketmine\PocketMine.php"){
-	$file = ".\src\pocketmine\PocketMine.php"
+}elseif(Test-Path "src\pocketmine\PocketMine.php"){
+	$file = "src\pocketmine\PocketMine.php"
 }else{
-	echo "Couldn't find a valid Leveryl installation"
+	echo "Couldn't find a valid PocketMine-MP installation"
 	pause
 	exit 1
 }
 
 function StartServer{
-	$command = "powershell " + $binary + " " + $file + " --enable-ansi"
+	$command = "powershell " + $binary + " " + $file + " " + $extraPocketMineArgs
 	iex $command
 }
 
@@ -35,6 +38,8 @@ while($Loop){
 		echo ("Restarted " + $loops + " times")
 	}
 	$loops++
-	echo "To escape the loop, press CTRL+C now."
+	echo "To escape the loop, press CTRL+C now. Otherwise, wait 5 seconds for the server to restart."
+	echo ""
+	Start-Sleep 5
 	StartServer
 }

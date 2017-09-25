@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,22 +19,20 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event;
 
-class TranslationContainer extends TextContainer
-{
+class TranslationContainer extends TextContainer{
 
 	/** @var string[] $params */
 	protected $params = [];
 
 	/**
-	 * @param string $text
+	 * @param string   $text
 	 * @param string[] $params
 	 */
-	public function __construct($text, array $params = [])
-	{
+	public function __construct(string $text, array $params = []){
 		parent::__construct($text);
 
 		$this->setParameters($params);
@@ -43,42 +41,38 @@ class TranslationContainer extends TextContainer
 	/**
 	 * @return string[]
 	 */
-	public function getParameters()
-	{
+	public function getParameters() : array{
 		return $this->params;
 	}
 
 	/**
 	 * @param int $i
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	public function getParameter($i)
-	{
-		return isset($this->params[$i]) ? $this->params[$i] : null;
+	public function getParameter(int $i){
+		return $this->params[$i] ?? null;
 	}
 
 	/**
-	 * @param int $i
+	 * @param int    $i
 	 * @param string $str
 	 */
-	public function setParameter($i, $str)
-	{
-		if($i < 0 or $i > count($this->params)) { //Intended, allow to set the last
+	public function setParameter(int $i, string $str){
+		if($i < 0 or $i > count($this->params)){ //Intended, allow to set the last
 			throw new \InvalidArgumentException("Invalid index $i, have " . count($this->params));
 		}
 
-		$this->params[(int)$i] = $str;
+		$this->params[$i] = $str;
 	}
 
 	/**
 	 * @param string[] $params
 	 */
-	public function setParameters(array $params)
-	{
+	public function setParameters(array $params){
 		$i = 0;
-		foreach($params as $str) {
-			$this->params[$i] = (string)$str;
+		foreach($params as $str){
+			$this->params[$i] = (string) $str;
 
 			++$i;
 		}

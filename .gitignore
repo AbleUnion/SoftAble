@@ -8,13 +8,8 @@ timings/*
 *.phar
 server.properties
 /pocketmine.yml
-/leveryl.yml
-crashdumps/*
-resource_packs/
 memoryDump_*/*
-
-# Cortex's Files.
-copytests.bat
+resource_packs/
 
 # Common IDEs
 .idea/
@@ -33,3 +28,5 @@ Desktop.ini
 # Sphinx-doc
 /docs/build/
 !/docs/requirements.txt
+
+vendor/*

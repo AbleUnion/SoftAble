@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,12 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event\entity;
 
@@ -27,8 +27,7 @@ use pocketmine\entity\Entity;
 use pocketmine\event\Cancellable;
 use pocketmine\level\Position;
 
-class EntityTeleportEvent extends EntityEvent implements Cancellable
-{
+class EntityTeleportEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;
 
 	/** @var Position */
@@ -36,8 +35,7 @@ class EntityTeleportEvent extends EntityEvent implements Cancellable
 	/** @var Position */
 	private $to;
 
-	public function __construct(Entity $entity, Position $from, Position $to)
-	{
+	public function __construct(Entity $entity, Position $from, Position $to){
 		$this->entity = $entity;
 		$this->from = $from;
 		$this->to = $to;
@@ -46,32 +44,29 @@ class EntityTeleportEvent extends EntityEvent implements Cancellable
 	/**
 	 * @return Position
 	 */
-	public function getFrom()
-	{
+	public function getFrom() : Position{
 		return $this->from;
 	}
 
 	/**
+	 * @deprecated This method has no effect or use.
 	 * @param Position $from
 	 */
-	public function setFrom(Position $from)
-	{
+	public function setFrom(Position $from){
 		$this->from = $from;
 	}
 
 	/**
 	 * @return Position
 	 */
-	public function getTo()
-	{
+	public function getTo() : Position{
 		return $this->to;
 	}
 
 	/**
 	 * @param Position $to
 	 */
-	public function setTo(Position $to)
-	{
+	public function setTo(Position $to){
 		$this->to = $to;
 	}
 

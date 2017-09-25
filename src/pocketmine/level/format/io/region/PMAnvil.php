@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,12 +19,12 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\format\io\region;
 
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\io\ChunkException;
+use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\SubChunk;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\{
@@ -37,13 +37,11 @@ use pocketmine\utils\MainLogger;
  * This format is exactly the same as the PC Anvil format, with the only difference being that the stored data order
  * is XZY instead of YZX for more performance loading and saving worlds.
  */
-class PMAnvil extends Anvil
-{
+class PMAnvil extends Anvil{
 
 	const REGION_FILE_EXTENSION = "mcapm";
 
-	public function nbtSerialize(Chunk $chunk): string
-	{
+	public function nbtSerialize(Chunk $chunk) : string{
 		$nbt = new CompoundTag("Level", []);
 		$nbt->xPos = new IntTag("xPos", $chunk->getX());
 		$nbt->zPos = new IntTag("zPos", $chunk->getZ());
@@ -57,16 +55,16 @@ class PMAnvil extends Anvil
 		$nbt->Sections = new ListTag("Sections", []);
 		$nbt->Sections->setTagType(NBT::TAG_Compound);
 		$subChunks = -1;
-		foreach($chunk->getSubChunks() as $y => $subChunk) {
-			if($subChunk->isEmpty()) {
+		foreach($chunk->getSubChunks() as $y => $subChunk){
+			if($subChunk->isEmpty()){
 				continue;
 			}
 			$nbt->Sections[++$subChunks] = new CompoundTag("", [
-				"Y"          => new ByteTag("Y", $y),
-				"Blocks"     => new ByteArrayTag("Blocks", $subChunk->getBlockIdArray()),
-				"Data"       => new ByteArrayTag("Data", $subChunk->getBlockDataArray()),
-				"SkyLight"   => new ByteArrayTag("SkyLight", $subChunk->getSkyLightArray()),
-				"BlockLight" => new ByteArrayTag("BlockLight", $subChunk->getBlockLightArray()),
+				new ByteTag("Y", $y),
+				new ByteArrayTag("Blocks",     $subChunk->getBlockIdArray()),
+				new ByteArrayTag("Data",       $subChunk->getBlockDataArray()),
+				new ByteArrayTag("SkyLight",   $subChunk->getBlockSkyLightArray()),
+				new ByteArrayTag("BlockLight", $subChunk->getBlockLightArray())
 			]);
 		}
 
@@ -75,8 +73,8 @@ class PMAnvil extends Anvil
 
 		$entities = [];
 
-		foreach($chunk->getEntities() as $entity) {
-			if(!($entity instanceof Player) and !$entity->closed) {
+		foreach($chunk->getEntities() as $entity){
+			if(!($entity instanceof Player) and !$entity->isClosed()){
 				$entity->saveNBT();
 				$entities[] = $entity->namedtag;
 			}
@@ -86,7 +84,7 @@ class PMAnvil extends Anvil
 		$nbt->Entities->setTagType(NBT::TAG_Compound);
 
 		$tiles = [];
-		foreach($chunk->getTiles() as $tile) {
+		foreach($chunk->getTiles() as $tile){
 			$tile->saveNBT();
 			$tiles[] = $tile->namedtag;
 		}
@@ -98,29 +96,28 @@ class PMAnvil extends Anvil
 
 		$writer = new NBT(NBT::BIG_ENDIAN);
 		$nbt->setName("Level");
-		$writer->setData(new CompoundTag("", ["Level" => $nbt]));
+		$writer->setData(new CompoundTag("", [$nbt]));
 
 		return $writer->writeCompressed(ZLIB_ENCODING_DEFLATE, RegionLoader::$COMPRESSION_LEVEL);
 	}
 
-	public function nbtDeserialize(string $data)
-	{
+	public function nbtDeserialize(string $data){
 		$nbt = new NBT(NBT::BIG_ENDIAN);
-		try {
+		try{
 			$nbt->readCompressed($data);
 
 			$chunk = $nbt->getData();
 
-			if(!isset($chunk->Level) or !($chunk->Level instanceof CompoundTag)) {
+			if(!isset($chunk->Level) or !($chunk->Level instanceof CompoundTag)){
 				throw new ChunkException("Invalid NBT format");
 			}
 
 			$chunk = $chunk->Level;
 
 			$subChunks = [];
-			if($chunk->Sections instanceof ListTag) {
-				foreach($chunk->Sections as $subChunk) {
-					if($subChunk instanceof CompoundTag) {
+			if($chunk->Sections instanceof ListTag){
+				foreach($chunk->Sections as $subChunk){
+					if($subChunk instanceof CompoundTag){
 						$subChunks[$subChunk->Y->getValue()] = new SubChunk(
 							$subChunk->Blocks->getValue(),
 							$subChunk->Data->getValue(),
@@ -140,25 +137,21 @@ class PMAnvil extends Anvil
 				isset($chunk->Biomes) ? $chunk->Biomes->getValue() : "",
 				isset($chunk->HeightMap) ? $chunk->HeightMap->getValue() : []
 			);
-			$result->setLightPopulated(isset($chunk->LightPopulated) ? ((bool)$chunk->LightPopulated->getValue()) : false);
-			$result->setPopulated(isset($chunk->TerrainPopulated) ? ((bool)$chunk->TerrainPopulated->getValue()) : false);
+			$result->setLightPopulated(isset($chunk->LightPopulated) ? ((bool) $chunk->LightPopulated->getValue()) : false);
+			$result->setPopulated(isset($chunk->TerrainPopulated) ? ((bool) $chunk->TerrainPopulated->getValue()) : false);
 			$result->setGenerated(true);
-
 			return $result;
-		} catch(\Throwable $e) {
+		}catch(\Throwable $e){
 			MainLogger::getLogger()->logException($e);
-
 			return null;
 		}
 	}
 
-	public static function getProviderName(): string
-	{
+	public static function getProviderName() : string{
 		return "pmanvil";
 	}
 
-	public static function getPcWorldFormatVersion(): int
-	{
+	public static function getPcWorldFormatVersion() : int{
 		return -1; //Not a PC format, only PocketMine-MP
 	}
 }

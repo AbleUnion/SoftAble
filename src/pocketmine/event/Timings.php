@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event;
 
@@ -31,8 +31,7 @@ use pocketmine\scheduler\PluginTask;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\tile\Tile;
 
-abstract class Timings
-{
+abstract class Timings{
 
 	/** @var TimingsHandler */
 	public static $fullTickTimer;
@@ -42,6 +41,8 @@ abstract class Timings
 	public static $memoryManagerTimer;
 	/** @var TimingsHandler */
 	public static $garbageCollectorTimer;
+	/** @var TimingsHandler */
+	public static $titleTickTimer;
 	/** @var TimingsHandler */
 	public static $playerListTimer;
 	/** @var TimingsHandler */
@@ -121,9 +122,8 @@ abstract class Timings
 	/** @var TimingsHandler[] */
 	public static $pluginTaskTimingMap = [];
 
-	public static function init()
-	{
-		if(self::$serverTickTimer instanceof TimingsHandler) {
+	public static function init(){
+		if(self::$serverTickTimer instanceof TimingsHandler){
 			return;
 		}
 
@@ -131,6 +131,7 @@ abstract class Timings
 		self::$serverTickTimer = new TimingsHandler("** Full Server Tick", self::$fullTickTimer);
 		self::$memoryManagerTimer = new TimingsHandler("Memory Manager");
 		self::$garbageCollectorTimer = new TimingsHandler("Garbage Collector", self::$memoryManagerTimer);
+		self::$titleTickTimer = new TimingsHandler("Console Title Tick");
 		self::$playerListTimer = new TimingsHandler("Player List");
 		self::$playerNetworkTimer = new TimingsHandler("Player Network Send");
 		self::$playerNetworkReceiveTimer = new TimingsHandler("Player Network Receive");
@@ -171,18 +172,17 @@ abstract class Timings
 
 	/**
 	 * @param TaskHandler $task
-	 * @param             $period
+	 * @param int         $period
 	 *
 	 * @return TimingsHandler
 	 */
-	public static function getPluginTaskTimings(TaskHandler $task, $period)
-	{
+	public static function getPluginTaskTimings(TaskHandler $task, int $period) : TimingsHandler{
 		$ftask = $task->getTask();
-		if($ftask instanceof PluginTask and $ftask->getOwner() !== null) {
+		if($ftask instanceof PluginTask and $ftask->getOwner() !== null){
 			$plugin = $ftask->getOwner()->getDescription()->getFullName();
-		} elseif($task->timingName !== null) {
+		}elseif($task->timingName !== null){
 			$plugin = "Scheduler";
-		} else {
+		}else{
 			$plugin = "Unknown";
 		}
 
@@ -190,13 +190,13 @@ abstract class Timings
 
 		$name = "Task: " . $plugin . " Runnable: " . $taskname;
 
-		if($period > 0) {
+		if($period > 0){
 			$name .= "(interval:" . $period . ")";
-		} else {
+		}else{
 			$name .= "(Single)";
 		}
 
-		if(!isset(self::$pluginTaskTimingMap[$name])) {
+		if(!isset(self::$pluginTaskTimingMap[$name])){
 			self::$pluginTaskTimingMap[$name] = new TimingsHandler($name, self::$schedulerSyncTimer);
 		}
 
@@ -208,13 +208,12 @@ abstract class Timings
 	 *
 	 * @return TimingsHandler
 	 */
-	public static function getEntityTimings(Entity $entity)
-	{
+	public static function getEntityTimings(Entity $entity) : TimingsHandler{
 		$entityType = (new \ReflectionClass($entity))->getShortName();
-		if(!isset(self::$entityTypeTimingMap[$entityType])) {
-			if($entity instanceof Player) {
+		if(!isset(self::$entityTypeTimingMap[$entityType])){
+			if($entity instanceof Player){
 				self::$entityTypeTimingMap[$entityType] = new TimingsHandler("** tickEntity - EntityPlayer", self::$tickEntityTimer);
-			} else {
+			}else{
 				self::$entityTypeTimingMap[$entityType] = new TimingsHandler("** tickEntity - " . $entityType, self::$tickEntityTimer);
 			}
 		}
@@ -227,10 +226,9 @@ abstract class Timings
 	 *
 	 * @return TimingsHandler
 	 */
-	public static function getTileEntityTimings(Tile $tile)
-	{
+	public static function getTileEntityTimings(Tile $tile) : TimingsHandler{
 		$tileType = (new \ReflectionClass($tile))->getShortName();
-		if(!isset(self::$tileEntityTypeTimingMap[$tileType])) {
+		if(!isset(self::$tileEntityTypeTimingMap[$tileType])){
 			self::$tileEntityTypeTimingMap[$tileType] = new TimingsHandler("** tickTileEntity - " . $tileType, self::$tickTileEntityTimer);
 		}
 
@@ -242,9 +240,8 @@ abstract class Timings
 	 *
 	 * @return TimingsHandler
 	 */
-	public static function getReceiveDataPacketTimings(DataPacket $pk)
-	{
-		if(!isset(self::$packetReceiveTimingMap[$pk::NETWORK_ID])) {
+	public static function getReceiveDataPacketTimings(DataPacket $pk) : TimingsHandler{
+		if(!isset(self::$packetReceiveTimingMap[$pk::NETWORK_ID])){
 			$pkName = (new \ReflectionClass($pk))->getShortName();
 			self::$packetReceiveTimingMap[$pk::NETWORK_ID] = new TimingsHandler("** receivePacket - " . $pkName . " [0x" . dechex($pk::NETWORK_ID) . "]", self::$playerNetworkReceiveTimer);
 		}
@@ -258,9 +255,8 @@ abstract class Timings
 	 *
 	 * @return TimingsHandler
 	 */
-	public static function getSendDataPacketTimings(DataPacket $pk)
-	{
-		if(!isset(self::$packetSendTimingMap[$pk::NETWORK_ID])) {
+	public static function getSendDataPacketTimings(DataPacket $pk) : TimingsHandler{
+		if(!isset(self::$packetSendTimingMap[$pk::NETWORK_ID])){
 			$pkName = (new \ReflectionClass($pk))->getShortName();
 			self::$packetSendTimingMap[$pk::NETWORK_ID] = new TimingsHandler("** sendPacket - " . $pkName . " [0x" . dechex($pk::NETWORK_ID) . "]", self::$playerNetworkTimer);
 		}

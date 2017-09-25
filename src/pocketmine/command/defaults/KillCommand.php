@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,22 +19,21 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class KillCommand extends VanillaCommand
-{
+class KillCommand extends VanillaCommand{
 
-	public function __construct($name)
-	{
+	public function __construct(string $name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.kill.description",
@@ -44,45 +43,28 @@ class KillCommand extends VanillaCommand
 		$this->setPermission("pocketmine.command.kill.self;pocketmine.command.kill.other");
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args)
-	{
-		if(!$this->testPermission($sender)) {
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
+		if(!$this->testPermission($sender)){
 			return true;
 		}
 
-		if(count($args) >= 2) {
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return false;
+		if(count($args) >= 2){
+			throw new InvalidCommandSyntaxException();
 		}
 
-		if(count($args) === 1) {
-			if(!$sender->hasPermission("pocketmine.command.kill.other")) {
+		if(count($args) === 1){
+			if(!$sender->hasPermission("pocketmine.command.kill.other")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
-
-				return true;
-			}
-			if($args[0] === "@e") {
-				$c = 0;
-				foreach($sender->getServer()->getLevels() as $level) {
-					foreach($level->getEntities() as $ent) {
-						if(!($ent instanceof Player)) {
-							$ent->close();
-							$c++;
-						}
-					}
-				}
-				$sender->sendMessage("Killed " . $c . " Entities!");
 
 				return true;
 			}
 
 			$player = $sender->getServer()->getPlayer($args[0]);
 
-			if($player instanceof Player) {
+			if($player instanceof Player){
 				$sender->getServer()->getPluginManager()->callEvent($ev = new EntityDamageEvent($player, EntityDamageEvent::CAUSE_SUICIDE, 1000));
 
-				if($ev->isCancelled()) {
+				if($ev->isCancelled()){
 					return true;
 				}
 
@@ -90,15 +72,15 @@ class KillCommand extends VanillaCommand
 				$player->setHealth(0);
 
 				Command::broadcastCommandMessage($sender, new TranslationContainer("commands.kill.successful", [$player->getName()]));
-			} else {
+			}else{
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.player.notFound"));
 			}
 
 			return true;
 		}
 
-		if($sender instanceof Player) {
-			if(!$sender->hasPermission("pocketmine.command.kill.self")) {
+		if($sender instanceof Player){
+			if(!$sender->hasPermission("pocketmine.command.kill.self")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;
@@ -106,17 +88,15 @@ class KillCommand extends VanillaCommand
 
 			$sender->getServer()->getPluginManager()->callEvent($ev = new EntityDamageEvent($sender, EntityDamageEvent::CAUSE_SUICIDE, 1000));
 
-			if($ev->isCancelled()) {
+			if($ev->isCancelled()){
 				return true;
 			}
 
 			$sender->setLastDamageCause($ev);
 			$sender->setHealth(0);
 			$sender->sendMessage(new TranslationContainer("commands.kill.successful", [$sender->getName()]));
-		} else {
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return false;
+		}else{
+			throw new InvalidCommandSyntaxException();
 		}
 
 		return true;

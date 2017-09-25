@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,53 +19,51 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
-
+use pocketmine\item\Item;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
 
-class AddItemEntityPacket extends DataPacket
-{
+class AddItemEntityPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::ADD_ITEM_ENTITY_PACKET;
 
+	/** @var int|null */
 	public $entityUniqueId = null; //TODO
+	/** @var int */
 	public $entityRuntimeId;
+	/** @var Item */
 	public $item;
-	public $x;
-	public $y;
-	public $z;
-	public $speedX = 0.0;
-	public $speedY = 0.0;
-	public $speedZ = 0.0;
+	/** @var Vector3 */
+	public $position;
+	/** @var Vector3|null */
+	public $motion;
+	/** @var array */
 	public $metadata = [];
 
-	public function decode()
-	{
+	protected function decodePayload(){
 		$this->entityUniqueId = $this->getEntityUniqueId();
 		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->item = $this->getSlot();
-		$this->getVector3f($this->x, $this->y, $this->z);
-		$this->getVector3f($this->speedX, $this->speedY, $this->speedZ);
+		$this->position = $this->getVector3Obj();
+		$this->motion = $this->getVector3Obj();
 		$this->metadata = $this->getEntityMetadata();
 	}
 
-	public function encode()
-	{
-		$this->reset();
+	protected function encodePayload(){
 		$this->putEntityUniqueId($this->entityUniqueId ?? $this->entityRuntimeId);
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putSlot($this->item);
-		$this->putVector3f($this->x, $this->y, $this->z);
-		$this->putVector3f($this->speedX, $this->speedY, $this->speedZ);
+		$this->putVector3Obj($this->position);
+		$this->putVector3ObjNullable($this->motion);
 		$this->putEntityMetadata($this->metadata);
 	}
 
-	public function handle(NetworkSession $session): bool
-	{
+	public function handle(NetworkSession $session) : bool{
 		return $session->handleAddItemEntity($this);
 	}
 

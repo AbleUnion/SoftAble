@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,12 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event\entity;
 
@@ -30,15 +30,15 @@ use pocketmine\event\Cancellable;
 /**
  * Called when an Entity, excluding players, changes a block directly
  */
-class EntityBlockChangeEvent extends EntityEvent implements Cancellable
-{
+class EntityBlockChangeEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;
 
+	/** @var Block */
 	private $from;
+	/** @var Block */
 	private $to;
 
-	public function __construct(Entity $entity, Block $from, Block $to)
-	{
+	public function __construct(Entity $entity, Block $from, Block $to){
 		$this->entity = $entity;
 		$this->from = $from;
 		$this->to = $to;
@@ -47,16 +47,14 @@ class EntityBlockChangeEvent extends EntityEvent implements Cancellable
 	/**
 	 * @return Block
 	 */
-	public function getBlock()
-	{
+	public function getBlock() : Block{
 		return $this->from;
 	}
 
 	/**
 	 * @return Block
 	 */
-	public function getTo()
-	{
+	public function getTo() : Block{
 		return $this->to;
 	}
 

@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,18 +19,16 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat;
 
-class GarbageCollectorCommand extends VanillaCommand
-{
+class GarbageCollectorCommand extends VanillaCommand{
 
-	public function __construct($name)
-	{
+	public function __construct(string $name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.gc.description",
@@ -39,9 +37,8 @@ class GarbageCollectorCommand extends VanillaCommand
 		$this->setPermission("pocketmine.command.gc");
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args)
-	{
-		if(!$this->testPermission($sender)) {
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
+		if(!$this->testPermission($sender)){
 			return true;
 		}
 
@@ -51,7 +48,7 @@ class GarbageCollectorCommand extends VanillaCommand
 
 		$memory = memory_get_usage();
 
-		foreach($sender->getServer()->getLevels() as $level) {
+		foreach($sender->getServer()->getLevels() as $level){
 			$diff = [count($level->getChunks()), count($level->getEntities()), count($level->getTiles())];
 			$level->doChunkGarbageCollection();
 			$level->unloadChunks(true);
@@ -70,7 +67,6 @@ class GarbageCollectorCommand extends VanillaCommand
 
 		$sender->sendMessage(TextFormat::GOLD . "Cycles: " . TextFormat::RED . number_format($cyclesCollected));
 		$sender->sendMessage(TextFormat::GOLD . "Memory freed: " . TextFormat::RED . number_format(round((($memory - memory_get_usage()) / 1024) / 1024, 2)) . " MB");
-
 		return true;
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,12 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event\entity;
 
@@ -27,27 +27,25 @@ use pocketmine\entity\Entity;
 use pocketmine\event\Cancellable;
 use pocketmine\level\Level;
 
-class EntityLevelChangeEvent extends EntityEvent implements Cancellable
-{
+class EntityLevelChangeEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;
 
+	/** @var Level */
 	private $originLevel;
+	/** @var Level */
 	private $targetLevel;
 
-	public function __construct(Entity $entity, Level $originLevel, Level $targetLevel)
-	{
+	public function __construct(Entity $entity, Level $originLevel, Level $targetLevel){
 		$this->entity = $entity;
 		$this->originLevel = $originLevel;
 		$this->targetLevel = $targetLevel;
 	}
 
-	public function getOrigin()
-	{
+	public function getOrigin() : Level{
 		return $this->originLevel;
 	}
 
-	public function getTarget()
-	{
+	public function getTarget() : Level{
 		return $this->targetLevel;
 	}
 }

@@ -37,6 +37,11 @@ memory:
  #This will stop the server when the limit is surpassed
  main-hard-limit: 1024
 
+ #AsyncWorker threads' hard memory limit in megabytes. Set to 0 to disable
+ #This will crash the task currently executing on the worker if the task exceeds the limit
+ #NOTE: THIS LIMIT APPLIES PER WORKER, NOT TO THE WHOLE PROCESS.
+ async-worker-hard-limit: 1024
+
  #Period in ticks to check memory (default 1 second)
  check-rate: 20
 
@@ -56,6 +61,12 @@ memory:
 
   #Trigger on low memory
   low-memory-trigger: true
+
+ #Settings controlling memory dump handling.
+ memory-dump:
+  #Dump memory from async workers as well as the main thread. If you have issues with segfaults when dumping memory, disable this setting.
+  dump-async-worker: true
+
 
  max-chunks:
   #Maximum render distance per player when low memory is triggered
@@ -104,7 +115,7 @@ player:
 
 level-settings:
  #The default format that levels will use when created
- default-format: anvil
+ default-format: pmanvil
  #Automatically change levels tick rate to maintain 20 ticks per second
  auto-tick-rate: true
  auto-tick-rate-limit: 20
@@ -158,7 +169,8 @@ auto-report:
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: crash.pocketmine.net
+ use-https: true
+ host: crash.pmmp.io
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking

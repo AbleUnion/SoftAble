@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\generator\hell;
 
@@ -30,11 +30,10 @@ use pocketmine\level\generator\biome\BiomeSelector;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\generator\noise\Simplex;
 use pocketmine\level\generator\populator\Populator;
-use pocketmine\math\Vector3 as Vector3;
+use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 
-class Nether extends Generator
-{
+class Nether extends Generator{
 
 	/** @var Populator[] */
 	private $populators = [];
@@ -42,10 +41,15 @@ class Nether extends Generator
 	private $level;
 	/** @var Random */
 	private $random;
+	/** @var int */
 	private $waterHeight = 32;
+	/** @var int */
 	private $emptyHeight = 64;
+	/** @var int */
 	private $emptyAmplitude = 1;
+	/** @var float */
 	private $density = 0.5;
+	/** @var int */
 	private $bedrockDepth = 5;
 
 	/** @var Populator[] */
@@ -59,24 +63,22 @@ class Nether extends Generator
 	private static $GAUSSIAN_KERNEL = null;
 	private static $SMOOTH_SIZE = 2;
 
-	public function __construct(array $options = [])
-	{
-		if(self::$GAUSSIAN_KERNEL === null) {
+	public function __construct(array $options = []){
+		if(self::$GAUSSIAN_KERNEL === null){
 			self::generateKernel();
 		}
 	}
 
-	private static function generateKernel()
-	{
+	private static function generateKernel(){
 		self::$GAUSSIAN_KERNEL = [];
 
 		$bellSize = 1 / self::$SMOOTH_SIZE;
 		$bellHeight = 2 * self::$SMOOTH_SIZE;
 
-		for($sx = -self::$SMOOTH_SIZE; $sx <= self::$SMOOTH_SIZE; ++$sx) {
+		for($sx = -self::$SMOOTH_SIZE; $sx <= self::$SMOOTH_SIZE; ++$sx){
 			self::$GAUSSIAN_KERNEL[$sx + self::$SMOOTH_SIZE] = [];
 
-			for($sz = -self::$SMOOTH_SIZE; $sz <= self::$SMOOTH_SIZE; ++$sz) {
+			for($sz = -self::$SMOOTH_SIZE; $sz <= self::$SMOOTH_SIZE; ++$sz){
 				$bx = $bellSize * $sx;
 				$bz = $bellSize * $sz;
 				self::$GAUSSIAN_KERNEL[$sx + self::$SMOOTH_SIZE][$sz + self::$SMOOTH_SIZE] = $bellHeight * exp(-($bx * $bx + $bz * $bz) / 2);
@@ -84,18 +86,15 @@ class Nether extends Generator
 		}
 	}
 
-	public function getName()
-	{
+	public function getName() : string{
 		return "nether";
 	}
 
-	public function getSettings()
-	{
+	public function getSettings() : array{
 		return [];
 	}
 
-	public function init(ChunkManager $level, Random $random)
-	{
+	public function init(ChunkManager $level, Random $random){
 		$this->level = $level;
 		$this->random = $random;
 		$this->random->setSeed($this->level->getSeed());
@@ -116,46 +115,44 @@ class Nether extends Generator
 		$this->populators[] = $ores;*/
 	}
 
-	public function generateChunk($chunkX, $chunkZ)
-	{
+	public function generateChunk(int $chunkX, int $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 
 		$noise = Generator::getFastNoise3D($this->noiseBase, 16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
 
 		$chunk = $this->level->getChunk($chunkX, $chunkZ);
 
-		for($x = 0; $x < 16; ++$x) {
-			for($z = 0; $z < 16; ++$z) {
+		for($x = 0; $x < 16; ++$x){
+			for($z = 0; $z < 16; ++$z){
 
 				$biome = Biome::getBiome(Biome::HELL);
 				$chunk->setBiomeId($x, $z, $biome->getId());
 
-				for($y = 0; $y < 128; ++$y) {
-					if($y === 0 or $y === 127) {
+				for($y = 0; $y < 128; ++$y){
+					if($y === 0 or $y === 127){
 						$chunk->setBlockId($x, $y, $z, Block::BEDROCK);
 						continue;
 					}
 					$noiseValue = (abs($this->emptyHeight - $y) / $this->emptyHeight) * $this->emptyAmplitude - $noise[$x][$z][$y];
 					$noiseValue -= 1 - $this->density;
 
-					if($noiseValue > 0) {
+					if($noiseValue > 0){
 						$chunk->setBlockId($x, $y, $z, Block::NETHERRACK);
-					} elseif($y <= $this->waterHeight) {
+					}elseif($y <= $this->waterHeight){
 						$chunk->setBlockId($x, $y, $z, Block::STILL_LAVA);
 					}
 				}
 			}
 		}
 
-		foreach($this->generationPopulators as $populator) {
+		foreach($this->generationPopulators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
 	}
 
-	public function populateChunk($chunkX, $chunkZ)
-	{
+	public function populateChunk(int $chunkX, int $chunkZ){
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
-		foreach($this->populators as $populator) {
+		foreach($this->populators as $populator){
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
 		}
 
@@ -164,8 +161,7 @@ class Nether extends Generator
 		$biome->populateChunk($this->level, $chunkX, $chunkZ, $this->random);
 	}
 
-	public function getSpawn()
-	{
+	public function getSpawn() : Vector3{
 		return new Vector3(127.5, 128, 127.5);
 	}
 

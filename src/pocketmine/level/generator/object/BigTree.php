@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,15 +19,14 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\generator\object;
 
 use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 
-class BigTree extends Tree
-{
+class BigTree extends Tree{
 	private $trunkHeightMultiplier = 0.618;
 	private $trunkHeight;
 	private $leafAmount = 1;
@@ -42,13 +41,11 @@ class BigTree extends Tree
 	private $addLogVines = false;
 	private $addCocoaPlants = false;
 
-	public function canPlaceObject(ChunkManager $level, $x, $y, $z, Random $random)
-	{
+	public function canPlaceObject(ChunkManager $level, int $x, int $y, int $z, Random $random) : bool{
 		return false;
 	}
 
-	public function placeObject(ChunkManager $level, $x, $y, $z, Random $random)
-	{
+	public function placeObject(ChunkManager $level, int $x, int $y, int $z, Random $random){
 
 		/*$this->trunkHeight = (int) ($this->totalHeight * $this->trunkHeightMultiplier);
 		$leaves = $this->getLeafGroupPoints($level, $pos);

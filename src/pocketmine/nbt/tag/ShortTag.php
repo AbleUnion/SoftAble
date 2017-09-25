@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\nbt\tag;
 
@@ -27,40 +27,34 @@ use pocketmine\nbt\NBT;
 
 #include <rules/NBT.h>
 
-class ShortTag extends NamedTag
-{
+class ShortTag extends NamedTag{
 
 	/**
 	 * ShortTag constructor.
 	 *
 	 * @param string $name
-	 * @param int $value
+	 * @param int    $value
 	 */
-	public function __construct(string $name = "", int $value = 0)
-	{
+	public function __construct(string $name = "", int $value = 0){
 		parent::__construct($name, $value);
 	}
 
-	public function getType()
-	{
+	public function getType(){
 		return NBT::TAG_Short;
 	}
 
-	public function read(NBT $nbt, bool $network = false)
-	{
+	public function read(NBT $nbt, bool $network = false){
 		$this->value = $nbt->getSignedShort();
 	}
 
-	public function write(NBT $nbt, bool $network = false)
-	{
+	public function write(NBT $nbt, bool $network = false){
 		$nbt->putShort($this->value);
 	}
 
 	/**
 	 * @return int
 	 */
-	public function &getValue(): int
-	{
+	public function &getValue() : int{
 		return parent::getValue();
 	}
 
@@ -69,13 +63,12 @@ class ShortTag extends NamedTag
 	 *
 	 * @throws \TypeError
 	 */
-	public function setValue($value)
-	{
-		if(!is_int($value)) {
+	public function setValue($value){
+		if(!is_int($value)){
 			throw new \TypeError("ShortTag value must be of type int, " . gettype($value) . " given");
-		}/*elseif($value < -(2 ** 15) or $value > ((2 ** 15) - 1)){
+		}elseif($value < -(2 ** 15) or $value > ((2 ** 15) - 1)){
 			throw new \InvalidArgumentException("Value $value is too large!");
-		}*/
+		}
 		parent::setValue($value);
 	}
 }

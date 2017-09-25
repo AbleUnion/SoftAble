@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,27 +14,25 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event\entity;
 
 use pocketmine\entity\Item;
 use pocketmine\event\Cancellable;
 
-class ItemDespawnEvent extends EntityEvent implements Cancellable
-{
+class ItemDespawnEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;
 
 	/**
 	 * @param Item $item
 	 */
-	public function __construct(Item $item)
-	{
+	public function __construct(Item $item){
 		$this->entity = $item;
 
 	}
@@ -42,8 +40,7 @@ class ItemDespawnEvent extends EntityEvent implements Cancellable
 	/**
 	 * @return Item
 	 */
-	public function getEntity()
-	{
+	public function getEntity(){
 		return $this->entity;
 	}
 

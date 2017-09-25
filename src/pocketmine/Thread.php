@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,53 +19,55 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine;
 
 /**
  * This class must be extended by all custom threading classes
  */
-abstract class Thread extends \Thread
-{
+abstract class Thread extends \Thread{
 
 	/** @var \ClassLoader */
 	protected $classLoader;
 	protected $isKilled = false;
 
-	public function getClassLoader()
-	{
+	public function getClassLoader(){
 		return $this->classLoader;
 	}
 
-	public function setClassLoader(\ClassLoader $loader = null)
-	{
-		if($loader === null) {
+	public function setClassLoader(\ClassLoader $loader = null){
+		if($loader === null){
 			$loader = Server::getInstance()->getLoader();
 		}
 		$this->classLoader = $loader;
 	}
 
-	public function registerClassLoader()
-	{
-		if(!interface_exists("ClassLoader", false)) {
+	/**
+	 * Registers the class loader for this thread.
+	 *
+	 * WARNING: This method MUST be called from any descendent threads' run() method to make autoloading usable.
+	 * If you do not do this, you will not be able to use new classes that were not loaded when the thread was started
+	 * (unless you are using a custom autoloader).
+	 */
+	public function registerClassLoader(){
+		require(\pocketmine\PATH . "vendor/autoload.php");
+		if(!interface_exists("ClassLoader", false)){
 			require(\pocketmine\PATH . "src/spl/ClassLoader.php");
 			require(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
 		}
-		if($this->classLoader !== null) {
-			$this->classLoader->register(true);
+		if($this->classLoader !== null){
+			$this->classLoader->register(false);
 		}
 	}
 
-	public function start(int $options = PTHREADS_INHERIT_ALL)
-	{
+	public function start(?int $options = \PTHREADS_INHERIT_ALL){
 		ThreadManager::getInstance()->add($this);
 
-		if(!$this->isRunning() and !$this->isJoined() and !$this->isTerminated()) {
-			if($this->getClassLoader() === null) {
+		if(!$this->isRunning() and !$this->isJoined() and !$this->isTerminated()){
+			if($this->getClassLoader() === null){
 				$this->setClassLoader();
 			}
-
 			return parent::start($options);
 		}
 
@@ -75,14 +77,13 @@ abstract class Thread extends \Thread
 	/**
 	 * Stops the thread using the best way possible. Try to stop it yourself before calling this.
 	 */
-	public function quit()
-	{
+	public function quit(){
 		$this->isKilled = true;
 
 		$this->notify();
 
-		if(!$this->isJoined()) {
-			if(!$this->isTerminated()) {
+		if(!$this->isJoined()){
+			if(!$this->isTerminated()){
 				$this->join();
 			}
 		}
@@ -90,8 +91,7 @@ abstract class Thread extends \Thread
 		ThreadManager::getInstance()->remove($this);
 	}
 
-	public function getThreadName()
-	{
+	public function getThreadName() : string{
 		return (new \ReflectionClass($this))->getShortName();
 	}
 }

@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,27 +19,24 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Implementation of the UT3 Query Protocol (GameSpot)
  * Source: http://wiki.unrealadmin.org/UT3_query_protocol
  */
-
 namespace pocketmine\network\query;
 
 use pocketmine\Server;
 use pocketmine\utils\Binary;
 
-class QueryHandler
-{
+class QueryHandler{
 	private $server, $lastToken, $token, $longData, $shortData, $timeout;
 
 	const HANDSHAKE = 9;
 	const STATISTICS = 0;
 
-	public function __construct()
-	{
+	public function __construct(){
 		$this->server = Server::getInstance();
 		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.server.query.start"));
 		$addr = ($ip = $this->server->getIp()) != "" ? $ip : "0.0.0.0";
@@ -60,34 +57,30 @@ class QueryHandler
 		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.server.query.running", [$addr, $port]));
 	}
 
-	public function regenerateInfo()
-	{
+	public function regenerateInfo(){
 		$ev = $this->server->getQueryInformation();
 		$this->longData = $ev->getLongQuery();
 		$this->shortData = $ev->getShortQuery();
 		$this->timeout = microtime(true) + $ev->getTimeout();
 	}
 
-	public function regenerateToken()
-	{
+	public function regenerateToken(){
 		$this->lastToken = $this->token;
 		$this->token = random_bytes(16);
 	}
 
-	public static function getTokenString($token, $salt)
-	{
+	public static function getTokenString($token, $salt){
 		return Binary::readInt(substr(hash("sha512", $salt . ":" . $token, true), 7, 4));
 	}
 
-	public function handle($address, $port, $packet)
-	{
+	public function handle($address, $port, $packet){
 		$offset = 2;
 		$packetType = ord($packet{$offset++});
 		$sessionID = Binary::readInt(substr($packet, $offset, 4));
 		$offset += 4;
 		$payload = substr($packet, $offset);
 
-		switch($packetType) {
+		switch($packetType){
 			case self::HANDSHAKE: //Handshake
 				$reply = chr(self::HANDSHAKE);
 				$reply .= Binary::writeInt($sessionID);
@@ -97,19 +90,19 @@ class QueryHandler
 				break;
 			case self::STATISTICS: //Stat
 				$token = Binary::readInt(substr($payload, 0, 4));
-				if($token !== self::getTokenString($this->token, $address) and $token !== self::getTokenString($this->lastToken, $address)) {
+				if($token !== self::getTokenString($this->token, $address) and $token !== self::getTokenString($this->lastToken, $address)){
 					break;
 				}
 				$reply = chr(self::STATISTICS);
 				$reply .= Binary::writeInt($sessionID);
 
-				if($this->timeout < microtime(true)) {
+				if($this->timeout < microtime(true)){
 					$this->regenerateInfo();
 				}
 
-				if(strlen($payload) === 8) {
+				if(strlen($payload) === 8){
 					$reply .= $this->longData;
-				} else {
+				}else{
 					$reply .= $this->shortData;
 				}
 				$this->server->getNetwork()->sendPacket($address, $port, $reply);

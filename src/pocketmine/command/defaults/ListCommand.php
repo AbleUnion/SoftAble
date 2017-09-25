@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
@@ -27,11 +27,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 
-class ListCommand extends VanillaCommand
-{
+class ListCommand extends VanillaCommand{
 
-	public function __construct($name)
-	{
+	public function __construct(string $name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.list.description",
@@ -40,15 +38,14 @@ class ListCommand extends VanillaCommand
 		$this->setPermission("pocketmine.command.list");
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args)
-	{
-		if(!$this->testPermission($sender)) {
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
+		if(!$this->testPermission($sender)){
 			return true;
 		}
 
-		$playerNames = array_map(function(Player $player) {
+		$playerNames = array_map(function(Player $player){
 			return $player->getName();
-		}, array_filter($sender->getServer()->getOnlinePlayers(), function(Player $player) use ($sender) {
+		}, array_filter($sender->getServer()->getOnlinePlayers(), function(Player $player) use ($sender){
 			return $player->isOnline() and (!($sender instanceof Player) or $sender->canSee($player));
 		}));
 

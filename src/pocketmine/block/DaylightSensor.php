@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,27 +19,29 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\block;
 
-class DaylightSensor extends Transparent
-{
+class DaylightSensor extends Transparent{
 
 	protected $id = self::DAYLIGHT_SENSOR;
 
-	public function __construct($meta = 0)
-	{
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName()
-	{
+	public function getName() : string{
 		return "Daylight Sensor";
 	}
 
-	public function getHardness()
-	{
+	public function getHardness() : float{
 		return 0.2;
 	}
+
+	public function getFuelTime() : int{
+		return 300;
+	}
+
+	//TODO
 }

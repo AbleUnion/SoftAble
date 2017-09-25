@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 
 namespace pocketmine\network\mcpe\protocol;
@@ -29,26 +29,26 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class ResourcePackChunkDataPacket extends DataPacket
-{
+class ResourcePackChunkDataPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::RESOURCE_PACK_CHUNK_DATA_PACKET;
 
+	/** @var string */
 	public $packId;
+	/** @var int */
 	public $chunkIndex;
+	/** @var int */
 	public $progress;
+	/** @var string */
 	public $data;
 
-	public function decode()
-	{
+	protected function decodePayload(){
 		$this->packId = $this->getString();
 		$this->chunkIndex = $this->getLInt();
 		$this->progress = $this->getLLong();
 		$this->data = $this->get($this->getLInt());
 	}
 
-	public function encode()
-	{
-		$this->reset();
+	protected function encodePayload(){
 		$this->putString($this->packId);
 		$this->putLInt($this->chunkIndex);
 		$this->putLLong($this->progress);
@@ -56,8 +56,7 @@ class ResourcePackChunkDataPacket extends DataPacket
 		$this->put($this->data);
 	}
 
-	public function handle(NetworkSession $session): bool
-	{
+	public function handle(NetworkSession $session) : bool{
 		return $session->handleResourcePackChunkData($this);
 	}
 }

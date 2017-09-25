@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,16 +19,16 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
 
-class LevelEventPacket extends DataPacket
-{
+class LevelEventPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::LEVEL_EVENT_PACKET;
 
 	const EVENT_SOUND_CLICK = 1000;
@@ -41,13 +41,10 @@ class LevelEventPacket extends DataPacket
 	const EVENT_SOUND_GHAST = 1007;
 	const EVENT_SOUND_GHAST_SHOOT = 1008;
 	const EVENT_SOUND_BLAZE_SHOOT = 1009;
-
 	const EVENT_SOUND_DOOR_BUMP = 1010;
+
 	const EVENT_SOUND_DOOR_CRASH = 1012;
 
-	const EVENT_SOUND_BAT_FLY = 1015;
-	const EVENT_SOUND_ZOMBIE_INFECT = 1016;
-	const EVENT_SOUND_ZOMBIE_HEAL = 1017;
 	const EVENT_SOUND_ENDERMAN_TELEPORT = 1018;
 
 	const EVENT_SOUND_ANVIL_BREAK = 1020;
@@ -66,23 +63,25 @@ class LevelEventPacket extends DataPacket
 
 	const EVENT_SOUND_CAMERA = 1050;
 	const EVENT_SOUND_ORB = 1051;
-	const EVENT_SOUND_BLOCK_PLACE = 1052;
+	const EVENT_SOUND_TOTEM = 1052;
 
+	const EVENT_SOUND_ARMOR_STAND_BREAK = 1060;
+	const EVENT_SOUND_ARMOR_STAND_HIT = 1061;
+	const EVENT_SOUND_ARMOR_STAND_FALL = 1062;
+	const EVENT_SOUND_ARMOR_STAND_PLACE = 1063;
+
+	//TODO: check 2000-2017
 	const EVENT_PARTICLE_SHOOT = 2000;
 	const EVENT_PARTICLE_DESTROY = 2001;
-	const EVENT_PARTICLE_SPLASH = 2002; //This is actually the splash potion sound with particles
+	const EVENT_PARTICLE_SPLASH = 2002;
 	const EVENT_PARTICLE_EYE_DESPAWN = 2003;
 	const EVENT_PARTICLE_SPAWN = 2004;
-	
+
 	const EVENT_GUARDIAN_CURSE = 2006;
-	
+
 	const EVENT_PARTICLE_BLOCK_FORCE_FIELD = 2008;
 
-	const EVENT_PARTICLE_PORTAL_1 = 2010;
-	
-	const EVENT_PARTICLE_PORTAL_2 = 2013;
 	const EVENT_PARTICLE_PUNCH_BLOCK = 2014;
-
 
 	const EVENT_START_RAIN = 3001;
 	const EVENT_START_THUNDER = 3002;
@@ -99,6 +98,7 @@ class LevelEventPacket extends DataPacket
 	const EVENT_CAULDRON_FILL_WATER = 3506;
 	const EVENT_CAULDRON_TAKE_WATER = 3507;
 	const EVENT_CAULDRON_ADD_DYE = 3508;
+	const EVENT_CAULDRON_CLEAN_BANNER = 3509;
 
 	const EVENT_BLOCK_START_BREAK = 3600;
 	const EVENT_BLOCK_STOP_BREAK = 3601;
@@ -109,29 +109,26 @@ class LevelEventPacket extends DataPacket
 
 	const EVENT_ADD_PARTICLE_MASK = 0x4000;
 
+	/** @var int */
 	public $evid;
-	public $x = 0; //Weather effects don't have coordinates
-	public $y = 0;
-	public $z = 0;
+	/** @var Vector3|null */
+	public $position;
+	/** @var int */
 	public $data;
 
-	public function decode()
-	{
+	protected function decodePayload(){
 		$this->evid = $this->getVarInt();
-		$this->getVector3f($this->x, $this->y, $this->z);
+		$this->position = $this->getVector3Obj();
 		$this->data = $this->getVarInt();
 	}
 
-	public function encode()
-	{
-		$this->reset();
+	protected function encodePayload(){
 		$this->putVarInt($this->evid);
-		$this->putVector3f($this->x, $this->y, $this->z);
+		$this->putVector3ObjNullable($this->position);
 		$this->putVarInt($this->data);
 	}
 
-	public function handle(NetworkSession $session): bool
-	{
+	public function handle(NetworkSession $session) : bool{
 		return $session->handleLevelEvent($this);
 	}
 

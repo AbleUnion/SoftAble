@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,12 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -28,77 +28,60 @@ use pocketmine\event\TextContainer;
 use pocketmine\item\Item;
 use pocketmine\Player;
 
-class PlayerDeathEvent extends EntityDeathEvent
-{
+class PlayerDeathEvent extends EntityDeathEvent{
 	public static $handlerList = null;
+
+	/** @var Player */
+	protected $entity;
 
 	/** @var TextContainer|string */
 	private $deathMessage;
 	private $keepInventory = false;
-	private $keepExperience = false;
 
 	/**
-	 * @param Player $entity
-	 * @param Item[] $drops
+	 * @param Player               $entity
+	 * @param Item[]               $drops
 	 * @param string|TextContainer $deathMessage
 	 */
-	public function __construct(Player $entity, array $drops, $deathMessage)
-	{
+	public function __construct(Player $entity, array $drops, $deathMessage){
 		parent::__construct($entity, $drops);
 		$this->deathMessage = $deathMessage;
-		$this->keepExperience = $entity->getServer()->getLeverylConfigValue("KeepExperiencePoints", false);
 	}
 
 	/**
 	 * @return Player
 	 */
-	public function getEntity()
-	{
+	public function getEntity(){
 		return $this->entity;
 	}
 
 	/**
 	 * @return Player
 	 */
-	public function getPlayer()
-	{
+	public function getPlayer() : Player{
 		return $this->entity;
 	}
 
 	/**
 	 * @return TextContainer|string
 	 */
-	public function getDeathMessage()
-	{
+	public function getDeathMessage(){
 		return $this->deathMessage;
 	}
 
 	/**
 	 * @param TextContainer|string $deathMessage
 	 */
-	public function setDeathMessage($deathMessage)
-	{
+	public function setDeathMessage($deathMessage){
 		$this->deathMessage = $deathMessage;
 	}
 
-	public function getKeepInventory()
-	{
+	public function getKeepInventory() : bool{
 		return $this->keepInventory;
 	}
 
-	public function setKeepInventory(bool $keepInventory)
-	{
+	public function setKeepInventory(bool $keepInventory){
 		$this->keepInventory = $keepInventory;
-	}
-
-	public function getKeepExperience()
-	{
-		return $this->keepExperience;
-	}
-
-	public function setKeepExperience(bool $keepExperience)
-	{
-		$this->keepExperience = $keepExperience;
 	}
 
 }

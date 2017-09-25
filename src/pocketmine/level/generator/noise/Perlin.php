@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____			_		_   __  __ _				  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,23 +19,21 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\generator\noise;
 
 use pocketmine\utils\Random;
 
-class Perlin extends Noise
-{
+class Perlin extends Noise{
 	public static $grad3 = [
 		[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0],
 		[1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1],
-		[0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1],
+		[0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]
 	];
 
 
-	public function __construct(Random $random, $octaves, $persistence, $expansion = 1)
-	{
+	public function __construct(Random $random, $octaves, $persistence, $expansion = 1){
 		$this->octaves = $octaves;
 		$this->persistence = $persistence;
 		$this->expansion = $expansion;
@@ -43,15 +41,15 @@ class Perlin extends Noise
 		$this->offsetY = $random->nextFloat() * 256;
 		$this->offsetZ = $random->nextFloat() * 256;
 
-		for($i = 0; $i < 512; ++$i) {
+		for($i = 0; $i < 512; ++$i){
 			$this->perm[$i] = 0;
 		}
 
-		for($i = 0; $i < 256; ++$i) {
+		for($i = 0; $i < 256; ++$i){
 			$this->perm[$i] = $random->nextBoundedInt(256);
 		}
 
-		for($i = 0; $i < 256; ++$i) {
+		for($i = 0; $i < 256; ++$i){
 			$pos = $random->nextBoundedInt(256 - $i) + $i;
 			$old = $this->perm[$i];
 
@@ -62,15 +60,14 @@ class Perlin extends Noise
 
 	}
 
-	public function getNoise3D($x, $y, $z)
-	{
+	public function getNoise3D($x, $y, $z){
 		$x += $this->offsetX;
 		$y += $this->offsetY;
 		$z += $this->offsetZ;
 
-		$floorX = (int)$x;
-		$floorY = (int)$y;
-		$floorZ = (int)$z;
+		$floorX = (int) $x;
+		$floorY = (int) $y;
+		$floorZ = (int) $z;
 
 		$X = $floorX & 0xFF;
 		$Y = $floorY & 0xFF;
@@ -147,8 +144,7 @@ class Perlin extends Noise
 		*/
 	}
 
-	public function getNoise2D($x, $y)
-	{
+	public function getNoise2D($x, $y){
 		return $this->getNoise3D($x, $y, 0);
 	}
 }
