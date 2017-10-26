@@ -79,9 +79,12 @@ namespace pocketmine {
 	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
+	const NAME = "PocketMine-MP";
 	const VERSION = "1.7dev";
-	const API_VERSION = "3.0.0-ALPHA8";
+	const API_VERSION = "3.0.0-ALPHA9";
 	const CODENAME = "[REDACTED]";
+
+	const MIN_PHP_VERSION = "7.2.0RC3";
 
 	/*
 	 * Startup code. Do not look at it, it may harm you.
@@ -90,9 +93,9 @@ namespace pocketmine {
 	 * Enjoy it as much as I did writing it. I don't want to do it again.
 	 */
 
-	if(version_compare("7.2", PHP_VERSION) > 0){
-		echo "[CRITICAL] You must use PHP >= 7.2" . PHP_EOL;
-		echo "[CRITICAL] Please use the installer provided on the homepage." . PHP_EOL;
+	if(version_compare(MIN_PHP_VERSION, PHP_VERSION) > 0){
+		echo "[CRITICAL] " . \pocketmine\NAME . " requires PHP >= " . MIN_PHP_VERSION . ", but you have PHP " . PHP_VERSION . "." . PHP_EOL;
+		echo "[CRITICAL] Please use the installer provided on the homepage, or update to a newer PHP version." . PHP_EOL;
 		exit(1);
 	}
 
@@ -104,13 +107,15 @@ namespace pocketmine {
 
 	error_reporting(-1);
 
-	set_error_handler(function($severity, $message, $file, $line){
+	function error_handler($severity, $message, $file, $line){
 		if(error_reporting() & $severity){
 			throw new \ErrorException($message, 0, $severity, $file, $line);
 		}else{ //stfu operator
 			return true;
 		}
-	});
+	}
+
+	set_error_handler('\pocketmine\error_handler');
 
 	if(!extension_loaded("phar")){
 		echo "[CRITICAL] Unable to find the Phar extension." . PHP_EOL;
@@ -430,7 +435,7 @@ namespace pocketmine {
 					return (is_object($value) ? get_class($value) . " object" : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value))));
 				}, $args));
 			}
-			$messages[] = "#$j " . (isset($trace[$i]["file"]) ? cleanPath($trace[$i]["file"]) : "") . "(" . ($trace[$i]["line"] ?? "") . "): " . (isset($trace[$i]["class"]) ? $trace[$i]["class"] . (($trace[$i]["type"] === "dynamic" or $trace[$i]["type"] === "->") ? "->" : "::") : "") . $trace[$i]["function"] . "(" . Utils::printable($params) . ")";
+			$messages[] = "#$j " . (isset($trace[$i]["file"]) ? cleanPath($trace[$i]["file"]) : "") . "(" . (isset($trace[$i]["line"]) ? $trace[$i]["line"] : "") . "): " . (isset($trace[$i]["class"]) ? $trace[$i]["class"] . (($trace[$i]["type"] === "dynamic" or $trace[$i]["type"] === "->") ? "->" : "::") : "") . $trace[$i]["function"] . "(" . Utils::printable($params) . ")";
 		}
 
 		return $messages;
@@ -446,13 +451,13 @@ namespace pocketmine {
 		$errors = 0;
 
 		if(PHP_INT_SIZE < 8){
-			$logger->critical("Running PocketMine-MP with 32-bit systems/PHP is no longer supported. Please upgrade to a 64-bit system or use a 64-bit PHP binary.");
+			$logger->critical("Running " . \pocketmine\NAME . " with 32-bit systems/PHP is no longer supported. Please upgrade to a 64-bit system or use a 64-bit PHP binary.");
 			$exitCode = 1;
 			break;
 		}
 
 		if(php_sapi_name() !== "cli"){
-			$logger->critical("You must run PocketMine-MP using the CLI.");
+			$logger->critical("You must run " . \pocketmine\NAME . " using the CLI.");
 			++$errors;
 		}
 
@@ -484,7 +489,7 @@ namespace pocketmine {
 		}
 
 		if(extension_loaded("xdebug")){
-			$logger->warning(PHP_EOL . PHP_EOL . PHP_EOL . "\tYou are running PocketMine with xdebug enabled. This has a major impact on performance." . PHP_EOL . PHP_EOL);
+			$logger->warning(PHP_EOL . PHP_EOL . PHP_EOL . "\tYou are running " . \pocketmine\NAME . " with xdebug enabled. This has a major impact on performance." . PHP_EOL . PHP_EOL);
 		}
 
 		$extensions = [
@@ -546,7 +551,7 @@ namespace pocketmine {
 
 
 		if(\Phar::running(true) === ""){
-			$logger->warning("Non-packaged PocketMine-MP installation detected. Consider using a phar in production for better performance.");
+			$logger->warning("Non-packaged " . \pocketmine\NAME . " installation detected. Consider using a phar in production for better performance.");
 		}
 
 		ThreadManager::init();

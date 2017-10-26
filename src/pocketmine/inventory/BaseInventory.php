@@ -26,6 +26,8 @@ namespace pocketmine\inventory;
 use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
+use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\InventoryContentPacket;
 use pocketmine\network\mcpe\protocol\InventorySlotPacket;
 use pocketmine\network\mcpe\protocol\types\ContainerIds;
@@ -128,6 +130,21 @@ abstract class BaseInventory implements Inventory{
 		}
 	}
 
+	/**
+	 * Drops the contents of the inventory into the specified Level at the specified position and clears the inventory
+	 * contents.
+	 *
+	 * @param Level   $level
+	 * @param Vector3 $position
+	 */
+	public function dropContents(Level $level, Vector3 $position) : void{
+		foreach($this->getContents() as $item){
+			$level->dropItem($position, $item);
+		}
+
+		$this->clearAll();
+	}
+
 	protected function doSetItemEvents(int $index, Item $newItem) : ?Item{
 		return $newItem;
 	}
@@ -219,7 +236,7 @@ abstract class BaseInventory implements Inventory{
 		$item = clone $item;
 		$checkDamage = !$item->hasAnyDamageValue();
 		$checkTags = $item->hasCompoundTag();
-		for($i = 0; $i < $this->getSize(); ++$i){
+		for($i = 0, $size = $this->getSize(); $i < $size; ++$i){
 			$slot = $this->getItem($i);
 			if($item->equals($slot, $checkDamage, $checkTags)){
 				if(($diff = $slot->getMaxStackSize() - $slot->getCount()) > 0){
@@ -242,14 +259,14 @@ abstract class BaseInventory implements Inventory{
 		/** @var Item[] $slots */
 		$itemSlots = [];
 		foreach($slots as $slot){
-			if($slot->getId() !== 0 and $slot->getCount() > 0){
+			if(!$slot->isNull()){
 				$itemSlots[] = clone $slot;
 			}
 		}
 
 		$emptySlots = [];
 
-		for($i = 0; $i < $this->getSize(); ++$i){
+		for($i = 0, $size = $this->getSize(); $i < $size; ++$i){
 			$item = $this->getItem($i);
 			if($item->isNull()){
 				$emptySlots[] = $i;
@@ -299,12 +316,12 @@ abstract class BaseInventory implements Inventory{
 		/** @var Item[] $slots */
 		$itemSlots = [];
 		foreach($slots as $slot){
-			if($slot->getId() !== 0 and $slot->getCount() > 0){
+			if(!$slot->isNull()){
 				$itemSlots[] = clone $slot;
 			}
 		}
 
-		for($i = 0; $i < $this->getSize(); ++$i){
+		for($i = 0, $size = $this->getSize(); $i < $size; ++$i){
 			$item = $this->getItem($i);
 			if($item->isNull()){
 				continue;
@@ -347,6 +364,17 @@ abstract class BaseInventory implements Inventory{
 	 */
 	public function getViewers() : array{
 		return $this->viewers;
+	}
+
+	/**
+	 * Removes the inventory window from all players currently viewing it.
+	 * @param bool $force Force removal of permanent windows such as the player's own inventory. Used internally.
+	 */
+	public function removeAllViewers(bool $force = false) : void{
+		foreach($this->viewers as $hash => $viewer){
+			$viewer->removeWindow($this, $force);
+			unset($this->viewers[$hash]);
+		}
 	}
 
 	public function getHolder(){
@@ -402,7 +430,7 @@ abstract class BaseInventory implements Inventory{
 		}
 
 		foreach($target as $player){
-			if(($id = $player->getWindowId($this)) === ContainerIds::NONE or $player->spawned !== true){
+			if(($id = $player->getWindowId($this)) === ContainerIds::NONE){
 				$this->close($player);
 				continue;
 			}
